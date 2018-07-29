@@ -46,8 +46,8 @@ class podb:
         try:
             self.conn = sql.connect(file)
             self.c = self.conn.cursor()
-            self.c.execute("DROP TABLE IF EXISTS episodes")
-            self.c.execute("DROP TABLE IF EXISTS podcasts")
+            #self.c.execute("DROP TABLE IF EXISTS episodes")
+            #self.c.execute("DROP TABLE IF EXISTS podcasts")
         except Exception as e:
             self.o.output('e','Failed connecting to DB',e)
 
