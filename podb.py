@@ -1,3 +1,5 @@
+# coding=utf-8
+
 import feedparser
 import vlc
 import time
@@ -6,13 +8,28 @@ import random
 import sys
 import sqlite3 as sql
 import debug_output
+import ssl
+from datetime import datetime
+
 
 class podcast:
     def __init__(self,row):
         self.pod_id = row[0]
         self.p_title = row[1]
         self.e_title = row[2]
-        self.date = row[3]
+        d = row[3]
+        d = d[:-6]
+        try:
+            self.date = time.strptime(d,"%a, %d %b %Y %H:%M:%S")
+        except Exception as e:
+            d = row[3]
+            if 'GMT' in d:
+                d = d[:-4]
+                try:
+                    self.date = time.strptime(d,"%a, %d %b %Y %H:%M:%S")
+                except Exception as e:
+                    print("Failed to convert time %s" % row[3])
+                    sys.exit(0)
         self.file = row[4]
         self.description = row[5]
         self.downloaded = row[6]
@@ -23,37 +40,37 @@ class podcast:
 class podb:
 
     def __init__(self,file,d):
-        #self.o = debug_output.debug(False,'')
         self.o = d
         self.pod_c = 0
 
         try:
             self.conn = sql.connect(file)
             self.c = self.conn.cursor()
-            #self.c.execute("DROP TABLE IF EXISTS podcasts")
-            #self.c.execute("DROP TABLE IF EXISTS episodes")
+            self.c.execute("DROP TABLE IF EXISTS episodes")
+            self.c.execute("DROP TABLE IF EXISTS podcasts")
         except Exception as e:
             self.o.output('e','Failed connecting to DB',e)
 
         try:
             self.c.execute("CREATE TABLE IF NOT EXISTS podcasts (id INTEGER PRIMARY KEY AUTOINCREMENT, title, url)")
-            self.c.execute("CREATE TABLE IF NOT EXISTS episodes (pod_id INTEGER, p_title text, e_title text, date text, file text, description text, downloaded text, downloading text, mp3 blob)")
+            self.c.execute("CREATE TABLE IF NOT EXISTS episodes (pod_id INTEGER, p_title text, e_title text, date text, file text, description text, downloaded text, downloading text, mp3 text)")
             self.conn.commit()        
         except Exception as e:
             self.o.output('e','Failed connecting to DB',e)
 
     def write_mp3(self,pod):
         try:
-            self.c.execute("UPDATE episodes SET mp3=?,downloaded=1 WHERE e_title=?",([buffer(pod.mp3),pod.e_title]))
+            self.c.execute("UPDATE episodes SET mp3=?,downloaded=1,downloading=0 WHERE e_title=?",(pod.mp3,pod.e_title))
             self.conn.commit()
         except Exception as e: 
             self.o.output('e',"Error writing mp3 %s" %pod. e_title,e)
 
     def insert_episode(self,pod_id,p_title,e_title,date,file,description):
-        str="Inserting episode %s %s %s %s %s" % (pod_id,p_title,e_title,date,file)
-        self.o.output(1,str,None)
+        
         try:
             if (self.episode_exists(e_title) == False):
+                str="Inserting episode %s %s %s %s %s" % (pod_id,p_title,e_title,date,file)
+                self.o.output(1,str,None)
                 self.c.execute("INSERT INTO episodes(pod_id,p_title,e_title,date,file,description,downloaded, downloading) VALUES (?,?,?,?,?,?,?,?)",(pod_id,p_title,e_title,date,file,description,0,0))
                 self.conn.commit()
                 return 1
@@ -72,16 +89,17 @@ class podb:
         self.c.execute("SELECT * FROM episodes WHERE e_title=?", [e_title])
         rows = self.c.fetchall()
         if len(rows)>0: 
-            self.o.output(1,"Episode %s already exists" % e_title,None)
+            self.o.output(2,"Episode %s already exists" % e_title,None)
             return True
         else: return False
 
     def insert_podcast(self,title,url):
         try:
             if (self.podcast_exists(title) == False):
+                self.o.output(1,"Insertng podcast: %s %s" % (title,url),None)
                 self.c.execute("INSERT INTO podcasts(title,url) VALUES (?,?)",(title,url))
             else:
-                self.o.output(1,"Podcast already exists: %s %s" % (title, url),None)
+                self.o.output(2,"Podcast already exists: %s %s" % (title, url),None)
         except Exception as e: self.o.output('e',"Error inserting podcast: (%s,%s)" % (title,url),e)
         self.conn.commit()
         return True
@@ -103,20 +121,26 @@ class podb:
             url = child.get('xmlUrl')
             if "feedburner.com" in url:
                 url = url + "?fmt=xml"
-            self.o.output(1,"Insertng podcast: %s %s" % (title,url),None)
             self.insert_podcast(title,url)
 
     def load_episodes(self):
         count = 0
         self.c.execute("SELECT url FROM podcasts")
         rows = self.c.fetchall()
+        if hasattr(ssl, '_create_unverified_context'):
+            ssl._create_default_https_context = ssl._create_unverified_context
         for row in rows:
             try:
                 url = row
-                url = url[0].encode('ascii','ignore')
-                d = feedparser.parse(url)
+                #url = url[0].encode('ascii','ignore')
+                url = url[0]
+                d = feedparser.parse(str(url))
                 p_title = d.feed.title
                 pod_id = self.lookup_podcast_id(p_title)
+            except Exception as e:
+                self.o.output(2,"Error parsing episode %s" % url,e)
+                pass
+            try: 
                 for i in range(0,len(d.entries)):
                     e_title = d.entries[i].title
                     date = d.entries[i].published
@@ -132,23 +156,43 @@ class podb:
     def print_podcasts(self):
         count = 0
         for row in self.c.execute("SELECT * FROM podcasts"):
-            #self.o.output(1,str(row[0]) + '-' + str(row[1]),None)
+            self.o.output(3,str(row[0]) + '-' + row[1],None)
             count = count + 1
         self.o.output(1,"Total Podcasts: %s" % count,None)
 
     def print_episodes(self):
         count = 0
         for row in self.c.execute("SELECT * FROM episodes"):
-            #temp = str(row[0]) + '-' + str(row[1]) + '-' + str(row[2]) + '-' + str(row[3])
-            #self.o.output(1,temp,None)
+            temp = str(row[0]) + '-' + row[1] + '-' + row[2] + '-' + row[3]
+            self.o.output(3,temp,None)
             count = count + 1
         self.o.output(1,"Total Episodes: %s" % count,None)
 
     def missing_episodes(self):
         self.c.execute("SELECT * FROM episodes WHERE downloaded=0 AND downloading=0")
         rows = self.c.fetchall()
+        self.c.execute("UPDATE episodes SET downloading=1 WHERE downloaded=0")
+        self.conn.commit()
+        return rows
+
+    def housekeeping_downloading(self):
+        self.c.execute("UPDATE episodes SET downloading=0 WHERE downloading=1")
+        rows = self.c.fetchall()
+        self.conn.commit()
+        return len(rows)
+
+    def downloaded_episodes(self):
+        self.c.execute("SELECT * FROM episodes WHERE downloaded=1")
+        rows = self.c.fetchall()
         return rows
 
     def decode_episode(self,row):
         pod = podcast(row)
         return pod
+
+    def random_playable_podcast(self):
+        self.c.execute("SELECT * FROM episodes WHERE downloaded=1")
+        rows = self.c.fetchall()
+        num=random.randint(0,len(rows)-1)
+        if len(rows) == 0: return None
+        else: return self.decode_episode(rows[num])
