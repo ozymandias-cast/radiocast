@@ -182,7 +182,7 @@ class podb:
         return len(rows)
 
     def downloaded_episodes(self):
-        self.c.execute("SELECT * FROM episodes WHERE downloaded=1")
+        self.c.execute("SELECT * FROM episodes WHERE downloaded=1 AND downloading=0")
         rows = self.c.fetchall()
         return rows
 
