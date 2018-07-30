@@ -10,10 +10,14 @@ class cplaylist:
     def __init__(self,o):
         self.o = o
 
-    def build_playlist(self,l,lenght):
+    def build_playlist(self,l,length):
         if len(l) == 0: return 0
-        minl = min(len(l),lenght)
-        s = sorted(l, key=lambda podcast: podcast.date, reverse=True)
+        minl = min(len(l),length)
+        self.o.output(1,"Building playlist: l-%d length-%d min-%d" % (len(l),length,minl),None)
+        s = sorted(l, key=lambda podcast: podcast.date, reverse=False)
+        str_date1 = time.strftime("%a, %d %b %Y %H:%M:%S",s[0].date)
+        str_date2 = time.strftime("%a, %d %b %Y %H:%M:%S",s[(len(s)-1)].date)
+        self.o.output(1,"Head %s Tail %s" % (str_date1,str_date2),None)
         s[:minl]
         shuffle(s)
         for i in range(0,len(s)):

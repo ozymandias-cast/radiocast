@@ -23,7 +23,7 @@ class debug:
         else:
             now = datetime.datetime.now()
             str_t = str(now.hour) + ':' + str(now.minute) + ':' + str(now.second)
-            if level == 'e':
+            if level == 0:
                 str_t2 = str_t + ':' + 'ERROR:'
             else:
                 str_t2 = str_t + ':' + 'DEBUG:' + str(level)
@@ -32,7 +32,7 @@ class debug:
             if self.tofile == True:
                 self.f.write(de)
             else: 
-                print(de)
-            if level == 'e': sys.exit()
+                print(de.encode('utf-8'))
+            if level == 0: sys.exit()
     
         

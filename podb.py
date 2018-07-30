@@ -49,21 +49,21 @@ class podb:
             #self.c.execute("DROP TABLE IF EXISTS episodes")
             #self.c.execute("DROP TABLE IF EXISTS podcasts")
         except Exception as e:
-            self.o.output('e','Failed connecting to DB',e)
+            self.o.output(0,'Failed connecting to DB',e)
 
         try:
             self.c.execute("CREATE TABLE IF NOT EXISTS podcasts (id INTEGER PRIMARY KEY AUTOINCREMENT, title, url)")
             self.c.execute("CREATE TABLE IF NOT EXISTS episodes (pod_id INTEGER, p_title text, e_title text, date text, file text, description text, downloaded text, downloading text, mp3 text)")
             self.conn.commit()        
         except Exception as e:
-            self.o.output('e','Failed connecting to DB',e)
+            self.o.output(0,'Failed connecting to DB',e)
 
     def write_mp3(self,pod):
         try:
             self.c.execute("UPDATE episodes SET mp3=?,downloaded=1,downloading=0 WHERE e_title=?",(pod.mp3,pod.e_title))
             self.conn.commit()
         except Exception as e: 
-            self.o.output('e',"Error writing mp3 %s" %pod. e_title,e)
+            self.o.output(0,"Error writing mp3 %s" %pod. e_title,e)
 
     def insert_episode(self,pod_id,p_title,e_title,date,file,description):
         
@@ -76,7 +76,7 @@ class podb:
                 return 1
             else: return 0
         except Exception as e: 
-            self.o.output('e',"Error inserting episode %s-%s" % p_title,e_title,e)
+            self.o.output(0,"Error inserting episode %s-%s" % p_title,e_title,e)
             return 0
 
     def podcast_exists(self,title):
@@ -100,7 +100,7 @@ class podb:
                 self.c.execute("INSERT INTO podcasts(title,url) VALUES (?,?)",(title,url))
             else:
                 self.o.output(2,"Podcast already exists: %s %s" % (title, url),None)
-        except Exception as e: self.o.output('e',"Error inserting podcast: (%s,%s)" % (title,url),e)
+        except Exception as e: self.o.output(0,"Error inserting podcast: (%s,%s)" % (title,url),e)
         self.conn.commit()
         return True
 
