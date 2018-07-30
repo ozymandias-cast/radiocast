@@ -23,9 +23,6 @@ RUN pip install feedparser
 RUN pip install requests 
 RUN pip install python-vlc
 
-
-
-
 RUN mkdir /podcasts/
 
 ADD main.py /
