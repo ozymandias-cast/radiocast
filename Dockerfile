@@ -1,10 +1,10 @@
 FROM ubuntu:16.04
-RUN apt-get update && \
-    apt-get install -y vlc python-pip && \
-    pip install feedparser && \
-    pip install requests && \
-    pip install python-vlc && \
-    mkdir /podcasts/
+RUN apt-get update 
+RUN apt-get install -y vlc python-pip 
+RUN pip install feedparser 
+RUN pip install requests 
+RUN pip install python-vlc
+RUN mkdir /podcasts/
 
 ADD main.py /
 ADD podb.py /
