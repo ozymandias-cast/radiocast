@@ -48,7 +48,7 @@ if res==0: o.output(1,"Cannot start playing, no mp3 downloaded",None)
 while True:
     
     ## Updating Episodes
-    p.load_podcasts()
+    p.load_podcasts('/podcasts/Downcast.opml')
     p.load_episodes()
     
     ## Adding episodes to download
