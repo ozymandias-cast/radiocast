@@ -34,7 +34,7 @@ class download(Thread):
                 pod = settings.to_d.get(block=True)
                 self.o.output(1,"Downloading episode %s %s %s" % (pod.p_title.encode('utf-8'), pod.e_title.encode('utf-8'), pod.file),None)
                 try:
-                    r = requests.get(pod.file, allow_redirects=True)
+                    r = requests.get(pod.file, allow_redirects=True, timeout=10)
                     hash_object = hashlib.sha1(pod.e_title.encode('utf-8'))
                     pod.mp3 = settings.gpath + hash_object.hexdigest() + ".mp3"
                     newFile = open(pod.mp3, "wb")

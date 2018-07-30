@@ -141,11 +141,17 @@ while True:
     minlen = min(settings.playlist_gaming.qsize(),settings.playlist_movies.qsize(),settings.playlist_various.qsize())
     if minlen > 0:
         sleep_time = 10*minlen
+        o.output(1,"Gaming playlist size: %d" % settings.playlist_gaming.qsize(),None)
+        o.output(1,"Movies playlist size: %d" % settings.playlist_movies.qsize(),None)
+        o.output(1,"Various playlist size: %d" % settings.playlist_various.qsize(),None)
+        cp.print_playlist('gaming')
+        cp.print_playlist('movies')
+        cp.print_playlist('various')
         o.output(1,"Already playing, sleeping for %ds" % sleep_time,None)
         time.sleep(sleep_time)
     
     if not settings.to_d.empty():
         sleep_time = 60
-        o.output(1,"Already downloading, sleeping for %ds" % sleep_time,None)
+        o.output(1,"Already downloading, sleeping for %ds (to_d queue size: %d)" % (sleep_time,settings.to_d.qsize()),None)
         time.sleep(sleep_time)
 

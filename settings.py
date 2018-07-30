@@ -32,7 +32,7 @@ def init():
     playlist_movies = queue.Queue()
 
     #gpath = './podcasts/'
-    gpath = '/podcasts/'
+    gpath = './podcasts/'
     db = gpath + 'radiocast.db'
     pod_xml = gpath + 'Downcast.opml'
     
