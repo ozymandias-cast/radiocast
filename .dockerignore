@@ -1,5 +1,4 @@
 .git/*
 __pycache__/*
-Downcast.opml
 podcasts/*
-cmd.txt
+run.sh
