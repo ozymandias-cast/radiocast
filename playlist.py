@@ -18,7 +18,7 @@ class cplaylist:
         str_date1 = time.strftime("%a, %d %b %Y %H:%M:%S",s[0].date)
         str_date2 = time.strftime("%a, %d %b %Y %H:%M:%S",s[(len(s)-1)].date)
         self.o.output(1,"Head %s Tail %s" % (str_date1,str_date2),None)
-        s[:minl]
+        s=s[:minl]
         shuffle(s)
         for i in range(0,len(s)):
             str_date = time.strftime("%a, %d %b %Y %H:%M:%S",s[i].date)
