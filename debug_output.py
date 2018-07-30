@@ -1,4 +1,9 @@
 # coding=utf-8
+###################################################################
+# Developed by ozymandias-cast (https://github.com/ozymandias-cast)
+# License: GPLv3
+###################################################################
+ 
 
 import datetime
 import sys

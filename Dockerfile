@@ -1,3 +1,9 @@
+###################################################################
+# Developed by ozymandias-cast (https://github.com/ozymandias-cast)
+# License: GPLv3
+###################################################################
+ 
+
 #FROM ubuntu:16.04
 FROM alpine:3.8
 

@@ -1,4 +1,8 @@
 # coding=utf-8
+###################################################################
+# Developed by ozymandias-cast (https://github.com/ozymandias-cast)
+# License: GPLv3
+###################################################################
 
 import sys
 sys.path.append("/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/site-packages/")

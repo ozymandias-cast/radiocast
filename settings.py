@@ -1,4 +1,9 @@
 # coding=utf-8
+###################################################################
+# Developed by ozymandias-cast (https://github.com/ozymandias-cast)
+# License: GPLv3
+###################################################################
+
 import sys
 is_py2 = sys.version[0] == '2'
 if is_py2:
