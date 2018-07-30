@@ -44,7 +44,7 @@ class podcast:
 
     def print_podcast(self,o):
         str_date = time.strftime("%a, %d %b %Y %H:%M:%S",self.date)
-        o.output(1,"Podcast: %s-%s (Category: %s) Date:%s URL: %s Filename: %s" % (self.p_title,self.e_title,str_date,self.url,self.mp3),None)
+        o.output(1,"Podcast: %s-%s (Category: %s) Date:%s URL: %s Filename: %s" % (self.p_title,self.e_title,self.category,str_date,self.file,self.mp3),None)
 
 class podb:
 

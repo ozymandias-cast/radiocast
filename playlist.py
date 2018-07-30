@@ -36,8 +36,10 @@ class cplaylist:
         if category == 'gaming': playlist = settings.playlist_gaming
         if category == 'various': playlist = settings.playlist_various
         if category == 'movies': playlist = settings.playlist_movies
-        for i in range(0,len(playlist)):
-            playlist[i].print_podcast(self.o)
+        self.o.output(1,"PLAYLIST %s -------------------------------------------------------------------------------" % category,None)
+        while not playlist.empty():
+            pod=playlist.get()
+            pod.print_podcast(self.o)
 
         
 
