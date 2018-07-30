@@ -36,7 +36,9 @@ ADD download.py /
 ADD settings.py /
 ADD debug_output.py /
 
-EXPOSE 4444,4445,4446
+EXPOSE 4444
+EXPOSE 4445
+EXPOSE 4446
 VOLUME /podcasts
 
 CMD [ "python", "/main.py" ]
