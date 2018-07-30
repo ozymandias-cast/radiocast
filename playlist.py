@@ -12,7 +12,7 @@ class cplaylist:
 
     def build_playlist(self,l,lenght):
         if len(l) == 0: return 0
-        minl = min(len(l),length)
+        minl = min(len(l),lenght)
         l[:minl]
         s = sorted(l, key=lambda podcast: podcast.date, reverse=True)
         shuffle(s)
