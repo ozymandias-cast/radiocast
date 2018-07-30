@@ -13,8 +13,8 @@ class cplaylist:
     def build_playlist(self,l,lenght):
         if len(l) == 0: return 0
         minl = min(len(l),lenght)
-        l[:minl]
         s = sorted(l, key=lambda podcast: podcast.date, reverse=True)
+        s[:minl]
         shuffle(s)
         for i in range(0,len(s)):
             str_date = time.strftime("%a, %d %b %Y %H:%M:%S",s[i].date)
