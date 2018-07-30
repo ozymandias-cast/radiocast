@@ -20,25 +20,29 @@ else:
 class player(Thread):
     
     def episode_end(self,event):
-        if (self.category == 'gaming'): pod = settings.playlist_gaming.get()
-        if (self.category == 'various'): pod = settings.playlist_various.get()
-        if (self.category == 'movies'): pod = settings.playlist_movies.get()  
-        cmd = [pod.mp3]
-        #cmd.append("sout=#duplicate{dst=rtp{dst=%s,port=%s}" % (self.dst,self.port))
-        cmd.append("sout=#standard{access=http,mux=ogg,dst=%s:%s}" % (self.dst,self.port))
-        #cmd.append("no-sout-rtp-sap")    
-        #cmd.append("no-sout-standard-sap")
-        #cmd.append("sout-rtp-caching=1000")
-        cmd.append("sout-mux-caching=1000")
-        #cmd.append("sout-rtp-name=Hola")
-        #cmd.append("sout-rtp-description=Hola")
-        #cmd.append("sout-rtp-proto=tcp")
-        cmd.append("sout-keep")                
-        Media = self.instance.media_new(*cmd)
-        self.player.set_media(Media)
-        self.player.get_media()
-        self.o.output(1,"Playing %s-%s" % (pod.p_title, pod.e_title),None)
-        self.player.play()
+        try: 
+            if (self.category == 'gaming'): pod = settings.playlist_gaming.get()
+            if (self.category == 'various'): pod = settings.playlist_various.get()
+            if (self.category == 'movies'): pod = settings.playlist_movies.get()  
+            cmd = [pod.mp3]
+            #cmd.append("sout=#duplicate{dst=rtp{dst=%s,port=%s}" % (self.dst,self.port))
+            cmd.append("sout=#standard{access=http,mux=ogg,dst=%s:%s}" % (self.dst,self.port))
+            #cmd.append("no-sout-rtp-sap")    
+            #cmd.append("no-sout-standard-sap")
+            #cmd.append("sout-rtp-caching=1000")
+            cmd.append("sout-mux-caching=1000")
+            #cmd.append("sout-rtp-name=Hola")
+            #cmd.append("sout-rtp-description=Hola")
+            #cmd.append("sout-rtp-proto=tcp")
+            cmd.append("sout-keep")                
+            Media = self.instance.media_new(*cmd)
+            self.player.set_media(Media)
+            self.player.get_media()
+            self.o.output(1,"Playing %s-%s" % (pod.p_title, pod.e_title),None)
+            self.player.play()
+        except Exception as e:
+            self.o.output(0,"VLC ERROR: Cannot play %s-%s %s" % (pod.p_title,pod.e_title,pod.mp3,),e)
+
     
     def __init__(self,o,dst,port,category):
         Thread.__init__(self)
