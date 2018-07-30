@@ -14,7 +14,7 @@ class cplaylist:
     def __init__(self,o):
         self.o = o
 
-    def build_playlist(self,l,length):
+    def build_playlist(self,l,length,category):
         if len(l) == 0: return 0
         minl = min(len(l),length)
         self.o.output(1,"Building playlist: l-%d length-%d min-%d" % (len(l),length,minl),None)
@@ -27,6 +27,8 @@ class cplaylist:
         for i in range(0,len(s)):
             str_date = time.strftime("%a, %d %b %Y %H:%M:%S",s[i].date)
             self.o.output(1,"Playlist %d - %s-%s-%s" % (i,s[i].p_title,s[i].e_title,str_date),None)
-            settings.playlist.put(s[i])
+            if (category == 'gaming'): settings.playlist_gaming.put(s[i])
+            if (category == 'various'): settings.playlist_various.put(s[i])
+            if (category == 'movies'): settings.playlist_movies.put(s[i])
         return len(s)
 

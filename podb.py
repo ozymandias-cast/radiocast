@@ -39,6 +39,7 @@ class podcast:
         self.downloaded = row[6]
         self.downlading = row[7]
         self.mp3 = row[8]
+        self.category = row[9]
         return None
 
 class podb:
@@ -56,8 +57,8 @@ class podb:
             self.o.output(0,'Failed connecting to DB',e)
 
         try:
-            self.c.execute("CREATE TABLE IF NOT EXISTS podcasts (id INTEGER PRIMARY KEY AUTOINCREMENT, title, url)")
-            self.c.execute("CREATE TABLE IF NOT EXISTS episodes (pod_id INTEGER, p_title text, e_title text, date text, file text, description text, downloaded text, downloading text, mp3 text)")
+            self.c.execute("CREATE TABLE IF NOT EXISTS podcasts (id INTEGER PRIMARY KEY AUTOINCREMENT, title, url, category)")
+            self.c.execute("CREATE TABLE IF NOT EXISTS episodes (pod_id INTEGER, p_title text, e_title text, date text, file text, description text, downloaded text, downloading text, mp3 text, category text)")
             self.conn.commit()        
         except Exception as e:
             self.o.output(0,'Failed connecting to DB',e)
@@ -69,13 +70,13 @@ class podb:
         except Exception as e: 
             self.o.output(0,"Error writing mp3 %s" %pod. e_title,e)
 
-    def insert_episode(self,pod_id,p_title,e_title,date,file,description):
+    def insert_episode(self,pod_id,p_title,e_title,date,file,description,category):
         
         try:
             if (self.episode_exists(e_title) == False):
                 str="Inserting episode %s %s %s %s %s" % (pod_id,p_title,e_title,date,file)
                 self.o.output(1,str,None)
-                self.c.execute("INSERT INTO episodes(pod_id,p_title,e_title,date,file,description,downloaded, downloading) VALUES (?,?,?,?,?,?,?,?)",(pod_id,p_title,e_title,date,file,description,0,0))
+                self.c.execute("INSERT INTO episodes(pod_id,p_title,e_title,date,file,description,downloaded,downloading,category) VALUES (?,?,?,?,?,?,?,?,?)",(pod_id,p_title,e_title,date,file,description,0,0,category))
                 self.conn.commit()
                 return 1
             else: return 0
@@ -97,11 +98,11 @@ class podb:
             return True
         else: return False
 
-    def insert_podcast(self,title,url):
+    def insert_podcast(self,title,url,category):
         try:
             if (self.podcast_exists(title) == False):
                 self.o.output(1,"Insertng podcast: %s %s" % (title,url),None)
-                self.c.execute("INSERT INTO podcasts(title,url) VALUES (?,?)",(title,url))
+                self.c.execute("INSERT INTO podcasts(title,url,category) VALUES (?,?,?)",(title,url,category))
             else:
                 self.o.output(2,"Podcast already exists: %s %s" % (title, url),None)
         except Exception as e: self.o.output(0,"Error inserting podcast: (%s,%s)" % (title,url),e)
@@ -123,21 +124,23 @@ class podb:
         for child in root[1]:
             title = child.get('title')
             url = child.get('xmlUrl')
+            category = child.get('category')
             if "feedburner.com" in url:
                 url = url + "?fmt=xml"
-            self.insert_podcast(title,url)
+            self.insert_podcast(title,url,category)
 
     def load_episodes(self):
         count = 0
-        self.c.execute("SELECT url FROM podcasts")
+        self.c.execute("SELECT url,category FROM podcasts")
         rows = self.c.fetchall()
         if hasattr(ssl, '_create_unverified_context'):
             ssl._create_default_https_context = ssl._create_unverified_context
+        self.o.output(1,"Trying to load %d episodes" % len(rows),None)
         for row in rows:
             try:
                 url = row
-                #url = url[0].encode('ascii','ignore')
                 url = url[0]
+                category = str(row[1])
                 d = feedparser.parse(str(url))
                 p_title = d.feed.title
                 pod_id = self.lookup_podcast_id(p_title)
@@ -150,7 +153,7 @@ class podb:
                     date = d.entries[i].published
                     file2 = d.entries[i].enclosures[0].href
                     description = d.entries[i].description
-                    r=self.insert_episode(pod_id,p_title,e_title,date,file2,description)
+                    r=self.insert_episode(pod_id,p_title,e_title,date,file2,description,category)
                     count = count + r
             except Exception as e:
                 self.o.output(2,"Error loading episode %s" % url,e)
@@ -185,8 +188,8 @@ class podb:
         self.conn.commit()
         return len(rows)
 
-    def downloaded_episodes(self):
-        self.c.execute("SELECT * FROM episodes WHERE downloaded=1 AND downloading=0")
+    def downloaded_episodes(self,category):
+        self.c.execute("SELECT * FROM episodes WHERE downloaded=1 AND downloading=0 AND category=?",[category])
         rows = self.c.fetchall()
         return rows
 

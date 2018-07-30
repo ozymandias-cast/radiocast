@@ -27,32 +27,58 @@ else:
     import queue as queue
 
 o = debug_output.debug(False,'')    
-p = podb.podb('/podcasts/radiocast.db',o)
 settings.init()
+p = podb.podb(settings.db,o)
 cp = playlist.cplaylist(o)
 
-p.load_podcasts('/podcasts/Downcast.opml')
+p.load_podcasts(settings.pod_xml)
 p.load_episodes()
 
 d = download.download(o)
 d.start()
 
-play = player.player(o,settings.ip,settings.port)
+play = player.player(o,settings.ip,settings.port_gaming,'gaming')
+play.start()
+play = player.player(o,settings.ip,settings.port_movies,'gaming')
+play.start()
+play = player.player(o,settings.ip,settings.port_movies,'various')
 play.start()
 
-## Building playlist
-rows = p.downloaded_episodes()
-o.output(1,"Episodes already downloaded %d" % len(rows),None)
+
+## Building playlist Gaming
+category = 'gaming'
+rows = p.downloaded_episodes(category)
+o.output(1,"Episodes already downloaded (%s) %d" % (category,len(rows)),None)
 l = list()
 for row in rows:
     l.append(p.decode_episode(row))
-res = cp.build_playlist(l,40)
-if res==0: o.output(1,"Cannot start playing, no mp3 downloaded",None)
- 
+res = cp.build_playlist(l,40,category)
+if res==0: o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
+
+## Building playlist Movies
+category = 'movies'
+rows = p.downloaded_episodes(category)
+o.output(1,"Episodes already downloaded (%s) %d" % (category,len(rows)),None)
+l = list()
+for row in rows:
+    l.append(p.decode_episode(row))
+res = cp.build_playlist(l,40,category)
+if res==0: o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
+
+## Building playlist Movies
+category = 'various'
+rows = p.downloaded_episodes(category)
+o.output(1,"Episodes already downloaded (%s) %d" % (category,len(rows)),None)
+l = list()
+for row in rows:
+    l.append(p.decode_episode(row))
+res = cp.build_playlist(l,40,category)
+if res==0: o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
+
 while True:
     
     ## Updating Episodes
-    p.load_podcasts('/podcasts/Downcast.opml')
+    p.load_podcasts(settings.pod_xml)
     p.load_episodes()
     
     ## Adding episodes to download
@@ -78,18 +104,43 @@ while True:
         settings.from_d.task_done()
 
     ## Re-building playlist
-    if settings.playlist.empty():
-        rows = p.downloaded_episodes()
-        o.output(1,"Episodes already downloaded %d" % len(rows),None)
+    ## Building playlist Gaming
+    if settings.playlist_gaming.empty():
+        category = 'gaming'
+        rows = p.downloaded_episodes(category)
+        o.output(1,"Episodes already downloaded (%s) %d" % (category,len(rows)),None)
         l = list()
         for row in rows:
             l.append(p.decode_episode(row))
-        res = cp.build_playlist(l,40)
-        if res==0: o.output(1,"Cannot start playing, no mp3 downloaded",None)
+        res = cp.build_playlist(l,40,category)
+        if res==0: o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
+
+    ## Building playlist Movies
+    if settings.playlist_movies.empty():
+        category = 'movies'
+        rows = p.downloaded_episodes(category)
+        o.output(1,"Episodes already downloaded (%s) %d" % (category,len(rows)),None)
+        l = list()
+        for row in rows:
+            l.append(p.decode_episode(row))
+        res = cp.build_playlist(l,40,category)
+        if res==0: o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
+
+    ## Building playlist Various
+    if settings.playlist_various.empty():
+        category = 'various'
+        rows = p.downloaded_episodes(category)
+        o.output(1,"Episodes already downloaded (%s) %d" % (category,len(rows)),None)
+        l = list()
+        for row in rows:
+            l.append(p.decode_episode(row))
+        res = cp.build_playlist(l,40,category)
+        if res==0: o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
 
     ## Sleeping
-    if not settings.playlist.empty():
-        sleep_time = 10*settings.playlist.qsize()
+    minlen = min(settings.playlist_gaming.qsize(),settings.playlist_movies.qsize(),settings.playlist_various.qsize())
+    if minlen > 0:
+        sleep_time = 10*minlen
         o.output(1,"Sleeping for %ds" % sleep_time,None)
         time.sleep(sleep_time)
 

@@ -14,17 +14,39 @@ else:
 def init():
     global to_d
     global from_d
-    global playlist
+    global playlist_gaming
+    global playlist_various
+    global playlist_movies
     global ip
-    global port
+    global port_gaming
+    global port_movies
+    global port_various
+    global gpath
+    global db
+    global pod_xml
+
     to_d = queue.Queue()
     from_d = queue.Queue()
-    playlist = queue.Queue()
+    playlist_gaming = queue.Queue()
+    playlist_various = queue.Queue()
+    playlist_movies = queue.Queue()
 
+    #gpath = './podcasts/'
+    gpath = '/podcasts/'
+    db = gpath + 'radiocast.db'
+    pod_xml = gpath + 'Downcast.opml'
+    
     import socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
     ip = str(s.getsockname()[0])
-    port = "4444"
-    print("Detected %s:%s" % (ip,port))
+    
+    port_gaming = "4444"
+    port_movies = "4445"
+    port_various = "4446"
+
+    print("Gaming %s:%s" % (ip,port_gaming))
+    print("Movies %s:%s" % (ip,port_movies))
+    print("Various %s:%s" % (ip,port_various))
+
     s.close()

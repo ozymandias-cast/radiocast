@@ -36,7 +36,7 @@ class download(Thread):
                 try:
                     r = requests.get(pod.file, allow_redirects=True)
                     hash_object = hashlib.sha1(pod.e_title.encode('utf-8'))
-                    pod.mp3 = "/podcasts/" + hash_object.hexdigest() + ".mp3"
+                    pod.mp3 = settings.gpath + hash_object.hexdigest() + ".mp3"
                     newFile = open(pod.mp3, "wb")
                     newFile.write(r.content)
                     newFile.close()

@@ -16,10 +16,13 @@ if is_py2:
     import Queue as queue
 else:
     import queue as queue
+
 class player(Thread):
     
     def episode_end(self,event):
-        pod = settings.playlist.get()
+        if (self.category == 'gaming'): pod = settings.playlist_gaming.get()
+        if (self.category == 'various'): pod = settings.playlist_various.get()
+        if (self.category == 'movies'): pod = settings.playlist_movies.get()  
         cmd = [pod.mp3]
         #cmd.append("sout=#duplicate{dst=rtp{dst=%s,port=%s}" % (self.dst,self.port))
         cmd.append("sout=#standard{access=http,mux=ogg,dst=%s:%s}" % (self.dst,self.port))
@@ -37,7 +40,7 @@ class player(Thread):
         self.o.output(1,"Playing %s-%s" % (pod.p_title, pod.e_title),None)
         self.player.play()
     
-    def __init__(self,o,dst,port):
+    def __init__(self,o,dst,port,category):
         Thread.__init__(self)
         self.dst = dst
         self.port = port
@@ -46,6 +49,7 @@ class player(Thread):
         self.medialist = self.instance.media_list_new() 
         self.o = o
         self.event_manager = self.player.event_manager()
+        self.category = category
         self.event_manager.event_attach(vlc.EventType.MediaPlayerEndReached, self.episode_end)
 
     def run(self):
