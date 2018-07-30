@@ -145,7 +145,7 @@ while True:
         time.sleep(sleep_time)
     
     if not settings.to_d.empty()
-        sleep_time = 10*settings.to_d.qsize()
+        sleep_time = 60
         o.output(1,"Already downloading, sleeping for %ds" % sleep_time,None)
         time.sleep(sleep_time)
 
