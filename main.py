@@ -42,12 +42,13 @@ o.output(1,"Episodes already downloaded %d" % len(rows),None)
 l = list()
 for row in rows:
     l.append(p.decode_episode(row))
-res = cp.build_playlist(l,20)
+res = cp.build_playlist(l,40)
 if res==0: o.output(1,"Cannot start playing, no mp3 downloaded",None)
  
 while True:
     
     ## Updating Episodes
+    p.load_podcasts()
     p.load_episodes()
     
     ## Adding episodes to download
