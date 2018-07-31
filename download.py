@@ -31,8 +31,9 @@ class download(Thread):
         while True:
             #count = 0
             while True:
+                self.o.output(1,"Retrieving one elment from the queue %d" % settings.to_d.qsize(),None)
                 pod = settings.to_d.get(block=True)
-                self.o.output(1,"Downloading episode %s %s %s" % (pod.p_title.encode('utf-8'), pod.e_title.encode('utf-8'), pod.file),None)
+                self.o.output(1,"Downloading Episode %s %s - %s" % (pod.p_title.encode('utf-8'), pod.e_title.encode('utf-8'), pod.file),None)
                 try:
                     r = requests.get(pod.file, allow_redirects=True, timeout=10)
                     hash_object = hashlib.sha1(pod.e_title.encode('utf-8'))

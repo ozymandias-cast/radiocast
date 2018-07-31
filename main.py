@@ -23,17 +23,42 @@ import playlist
 
 
 def main_new_playlist(category):
-    if settings.playlist_gaming.empty():
-        rows = p.downloaded_episodes(category)
-        if len(rows) > 0: 
-            o.output(1,"Building new playlist (%s) Available episodes: %d" % (category,len(rows)),None)
-            l = list()
-            for row in rows:
-                l.append(p.decode_episode(row))
-            res = cp.build_playlist(l,40,category)
-            o.output(2,"%s  playlist size: %d" % (category,settings.playlist_gaming.qsize()),None)
-            #cp.print_playlist('gaming')
-        else: o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
+    if category == 'gaming':
+        o.output(1,"Current Gaming Playlist: %d" % settings.playlist_gaming.qsize(),None)
+        if settings.playlist_gaming.empty():
+            rows = p.downloaded_episodes(category)
+            if len(rows) > 0: 
+                o.output(1,"Building new playlist (%s) Available episodes: %d" % (category,len(rows)),None)
+                l = list()
+                for row in rows:
+                    l.append(p.decode_episode(row))
+                res = cp.build_playlist(l,40,category)
+                #cp.print_playlist(category)
+            else: o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
+    if category == 'movies':
+        o.output(1,"Current Movies Playlist: %d" % settings.playlist_movies.qsize(),None)
+        if settings.playlist_movies.empty():
+            rows = p.downloaded_episodes(category)
+            if len(rows) > 0: 
+                o.output(1,"Building new playlist (%s) Available episodes: %d" % (category,len(rows)),None)
+                l = list()
+                for row in rows:
+                    l.append(p.decode_episode(row))
+                res = cp.build_playlist(l,40,category)
+                #cp.print_playlist(category)
+            else: o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
+    if category == 'various':
+        o.output(1,"Current Various Playlist: %d" % settings.playlist_various.qsize(),None)
+        if settings.playlist_various.empty():
+            rows = p.downloaded_episodes(category)
+            if len(rows) > 0: 
+                o.output(1,"Building new playlist (%s) Available episodes: %d" % (category,len(rows)),None)
+                l = list()
+                for row in rows:
+                    l.append(p.decode_episode(row))
+                res = cp.build_playlist(l,40,category)
+                #cp.print_playlist(category)
+            else: o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
 
 is_py2 = sys.version[0] == '2'
 if is_py2:
