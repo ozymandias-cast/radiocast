@@ -77,12 +77,12 @@ p.load_episodes()
 d = download.download(o)
 d.start()
 
-play = player.player(o,settings.ip,settings.port_gaming,'gaming')
-play.start()
-play = player.player(o,settings.ip,settings.port_movies,'movies')
-play.start()
-play = player.player(o,settings.ip,settings.port_various,'various')
-play.start()
+play_gaming = player.player(o,settings.ip,settings.port_gaming,'gaming')
+play_gaming.start()
+play_movies = player.player(o,settings.ip,settings.port_movies,'movies')
+play_movies.start()
+play_various = player.player(o,settings.ip,settings.port_various,'various')
+play_various.start()
 
 
 ## Building playlist Gaming
