@@ -48,32 +48,38 @@ play.start()
 ## Building playlist Gaming
 category = 'gaming'
 rows = p.downloaded_episodes(category)
-o.output(1,"Episodes already downloaded (%s) %d" % (category,len(rows)),None)
-l = list()
-for row in rows:
-    l.append(p.decode_episode(row))
-res = cp.build_playlist(l,40,category)
-if res==0: o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
+if len(rows) > 0: 
+    o.output(1,"Building new playlist (%s) Available episodes: %d" % (category,len(rows)),None)
+    l = list()
+    for row in rows:
+        l.append(p.decode_episode(row))
+    res = cp.build_playlist(l,40,category)
+    cp.print_playlist('gaming')
+else: o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
 
 ## Building playlist Movies
 category = 'movies'
 rows = p.downloaded_episodes(category)
-o.output(1,"Episodes already downloaded (%s) %d" % (category,len(rows)),None)
-l = list()
-for row in rows:
-    l.append(p.decode_episode(row))
-res = cp.build_playlist(l,40,category)
-if res==0: o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
+if len(rows) > 0: 
+    o.output(1,"Building new playlist (%s) Available episodes: %d" % (category,len(rows)),None)
+    l = list()
+    for row in rows:
+        l.append(p.decode_episode(row))
+    res = cp.build_playlist(l,40,category)
+    cp.print_playlist('movies')
+else: o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
 
 ## Building playlist Movies
 category = 'various'
 rows = p.downloaded_episodes(category)
-o.output(1,"Episodes already downloaded (%s) %d" % (category,len(rows)),None)
-l = list()
-for row in rows:
-    l.append(p.decode_episode(row))
-res = cp.build_playlist(l,40,category)
-if res==0: o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
+if len(rows) > 0: 
+    o.output(1,"Building new playlist (%s) Available episodes: %d" % (category,len(rows)),None)
+    l = list()
+    for row in rows:
+        l.append(p.decode_episode(row))
+    res = cp.build_playlist(l,40,category)
+    cp.print_playlist('various')
+else: o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
 
 while True:
     
@@ -108,50 +114,53 @@ while True:
     if settings.playlist_gaming.empty():
         category = 'gaming'
         rows = p.downloaded_episodes(category)
-        o.output(1,"Episodes already downloaded (%s) %d" % (category,len(rows)),None)
-        l = list()
-        for row in rows:
-            l.append(p.decode_episode(row))
-        res = cp.build_playlist(l,40,category)
-        if res==0: o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
+        if len(rows) > 0: 
+            o.output(1,"Building new playlist (%s) Available episodes: %d" % (category,len(rows)),None)
+            l = list()
+            for row in rows:
+                l.append(p.decode_episode(row))
+            res = cp.build_playlist(l,40,category)
+            o.output(2,"Gaming playlist size: %d" % settings.playlist_gaming.qsize(),None)
+            cp.print_playlist('gaming')
+        else: o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
 
     ## Building playlist Movies
     if settings.playlist_movies.empty():
         category = 'movies'
         rows = p.downloaded_episodes(category)
-        o.output(1,"Episodes already downloaded (%s) %d" % (category,len(rows)),None)
-        l = list()
-        for row in rows:
-            l.append(p.decode_episode(row))
-        res = cp.build_playlist(l,40,category)
-        if res==0: o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
+        if len(rows) > 0: 
+            o.output(1,"Building new playlist (%s) Available episodes: %d" % (category,len(rows)),None)
+            l = list()
+            for row in rows:
+                l.append(p.decode_episode(row))
+            res = cp.build_playlist(l,40,category)
+            o.output(2,"Movies playlist size: %d" % settings.playlist_movies.qsize(),None)
+            cp.print_playlist('movies')
+        else: o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
 
     ## Building playlist Various
     if settings.playlist_various.empty():
         category = 'various'
         rows = p.downloaded_episodes(category)
-        o.output(1,"Episodes already downloaded (%s) %d" % (category,len(rows)),None)
-        l = list()
-        for row in rows:
-            l.append(p.decode_episode(row))
-        res = cp.build_playlist(l,40,category)
-        if res==0: o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
+        if len(rows) > 0: 
+            o.output(1,"Building new playlist (%s) Available episodes: %d" % (category,len(rows)),None)
+            l = list()
+            for row in rows:
+                l.append(p.decode_episode(row))
+            res = cp.build_playlist(l,40,category)
+            o.output(2,"Various playlist size: %d" % settings.playlist_various.qsize(),None)
+            cp.print_playlist('various')
+        else: o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
 
     ## Sleeping
     minlen = min(settings.playlist_gaming.qsize(),settings.playlist_movies.qsize(),settings.playlist_various.qsize())
-    o.output(1,"Gaming playlist size: %d" % settings.playlist_gaming.qsize(),None)
-    cp.print_playlist('gaming')
-    o.output(1,"Movies playlist size: %d" % settings.playlist_movies.qsize(),None)
-    cp.print_playlist('movies')
-    o.output(1,"Various playlist size: %d" % settings.playlist_various.qsize(),None)
-    cp.print_playlist('various')
     if minlen > 0:
         sleep_time = 10*minlen
         o.output(1,"Already playing, sleeping for %ds" % sleep_time,None)
         time.sleep(sleep_time)
     
     if not settings.to_d.empty():
-        sleep_time = 60
+        sleep_time = 100
         o.output(1,"Already downloading, sleeping for %ds (to_d queue size: %d)" % (sleep_time,settings.to_d.qsize()),None)
         time.sleep(sleep_time)
 
