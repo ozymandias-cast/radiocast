@@ -7,12 +7,14 @@
 import feedparser
 import vlc
 import time
+import datetime
 import xml.etree.ElementTree as ET
 import random
 import sys
 import sqlite3 as sql
 import debug_output
 import ssl
+import settings
 from datetime import datetime
 
 
@@ -45,6 +47,12 @@ class podcast:
     def print_podcast(self,o):
         str_date = time.strftime("%a, %d %b %Y %H:%M:%S",self.date)
         o.output(1,"Podcast: %s-%s (Category: %s) Date:%s URL: %s Filename: %s" % (self.p_title,self.e_title,self.category,str_date,self.file,self.mp3),None)
+
+    def valid(self,o):
+        now = datetime.now()
+        delta = now.year - int(self.date[0])
+        #o.output(1,"Episode %s-%s old: %d" % (self.p_title,self.e_title,delta),None)
+        return delta<settings.delta
 
 class podb:
 
@@ -157,12 +165,8 @@ class podb:
                     date = d.entries[i].published
                     file2 = d.entries[i].enclosures[0].href
                     description = d.entries[i].description
-                    date_p = d.entries[i].published_parsed.year
-                    date_c = time.now().year
-                    delta = date_c - date_p
-                    if (delta<settings.delta): 
-                        r=self.insert_episode(pod_id,p_title,e_title,date,file2,description,category)
-                        count = count + r
+                    r=self.insert_episode(pod_id,p_title,e_title,date,file2,description,category)
+                    count = count + r
             except Exception as e:
                 self.o.output(2,"Error loading episode %s" % url,e)
                 pass 

@@ -20,8 +20,8 @@ else:
 class player(Thread):
 
     def event_callback(self,event):
-        self.o.output(0,"VLC ERROR: %s" % str(event),None)
-        sys.exit(0)
+        self.o.output(1,"VLC ERROR: %s" % str(event),None)
+        self.episode_end(None)
 
     def episode_end(self,event):
         try: 

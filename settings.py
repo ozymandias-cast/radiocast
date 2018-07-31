@@ -24,6 +24,7 @@ def init():
     global gpath
     global db
     global pod_xml
+    global delta
 
     to_d = queue.Queue()
     from_d = queue.Queue()

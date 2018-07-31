@@ -2,3 +2,4 @@ __pycache__/*
 podcasts/*
 run.sh
 .DS_Store
+*.pyc

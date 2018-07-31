@@ -17,6 +17,7 @@ import podb
 import debug_output
 import download
 from threading import Thread
+import datetime
 import settings
 import player
 import playlist
@@ -94,7 +95,9 @@ def main():
         rows = p.missing_episodes()
         o.output(1,"Missing Episodes %d" % len(rows),None)
         for row in rows:
-            settings.to_d.put(p.decode_episode(row))
+            pod=p.decode_episode(row)
+            if (pod.valid(o)): 
+                settings.to_d.put(pod)
         if settings.to_d.empty(): 
             r=p.housekeeping_downloading()
             o.output(1,"Housekeeping Downloading episodes: %d" % r,None)
@@ -104,7 +107,7 @@ def main():
         while not settings.from_d.empty():
             try:
                 pod = settings.from_d.get(block = False)
-                if pod.mp3 == None: pass
+                if pod.mp3 == None: pass #FIXME: Do something here
                 else: 
                     o.output(1,"New available episode %s - %s - %s" % (pod.p_title,pod.e_title,pod.date),None)
                     p.write_mp3(pod)
