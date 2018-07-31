@@ -48,7 +48,9 @@ class player(Thread):
         except Exception as e:
             self.o.output(0,"VLC ERROR: Cannot play %s-%s %s" % (pod.p_title,pod.e_title,pod.mp3,),e)
             pod.mp3 = None
-            settings.from_d.put(pod.mp3)
+            settings.from_d.put(pod)
+            self.episode_end()
+
     
     def __init__(self,o,dst,port,category):
         Thread.__init__(self)
@@ -71,7 +73,7 @@ class player(Thread):
         self.current = None
 
     def run(self):
-        while True: self.episode_end(None)
+        self.episode_end(None)
     
     def is_playing(self):
         if not self.current == None:
