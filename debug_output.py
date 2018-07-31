@@ -38,6 +38,6 @@ class debug:
                 self.f.write(de)
             else: 
                 print(de.encode('utf-8'))
-            if level == 0: sys.exit()
+            if level == 0: sys.exit(-1)
     
         

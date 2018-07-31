@@ -18,7 +18,11 @@ else:
     import queue as queue
 
 class player(Thread):
-    
+
+    def event_callback(self,event):
+        self.o.output(0,"VLC ERROR: %s" % str(event),None)
+        sys.exit(0)
+
     def episode_end(self,event):
         try: 
             if (self.category == 'gaming'): pod = settings.playlist_gaming.get()
@@ -43,7 +47,8 @@ class player(Thread):
             self.player.play()
         except Exception as e:
             self.o.output(0,"VLC ERROR: Cannot play %s-%s %s" % (pod.p_title,pod.e_title,pod.mp3,),e)
-
+            pod.mp3 = None
+            settings.from_d.put(pod.mp3)
     
     def __init__(self,o,dst,port,category):
         Thread.__init__(self)
@@ -56,10 +61,17 @@ class player(Thread):
         self.event_manager = self.player.event_manager()
         self.category = category
         self.event_manager.event_attach(vlc.EventType.MediaPlayerEndReached, self.episode_end)
+        self.event_manager.event_attach(vlc.EventType.MediaPlayerEncounteredError, self.event_callback)
+        self.event_manager.event_attach(vlc.EventType.MediaPlayerNothingSpecial, self.event_callback)
+        self.event_manager.event_attach(vlc.EventType.MediaPlayerUncorked, self.event_callback)
+        self.event_manager.event_attach(vlc.EventType.MediaPlayerCorked, self.event_callback)
+        self.event_manager.event_attach(vlc.EventType.VlmMediaInstanceStatusError , self.event_callback)
+
+
         self.current = None
 
     def run(self):
-        self.episode_end(None)
+        while True: self.episode_end(None)
     
     def is_playing(self):
         if not self.current == None:
