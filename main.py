@@ -125,12 +125,15 @@ while True:
     ## Re-building playlist
     ## Building playlist Gaming
     main_new_playlist('gaming')
-
+    play_gaming.is_playing()
+        
     ## Building playlist Movies
     main_new_playlist('movies')
+    play_movies.is_playing()
 
     ## Building playlist Movies
     main_new_playlist('various')
+    play_various.is_playing()
 
     ## Sleeping
     minlen = min(settings.playlist_gaming.qsize(),settings.playlist_movies.qsize(),settings.playlist_various.qsize())

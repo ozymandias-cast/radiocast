@@ -39,6 +39,7 @@ class player(Thread):
             self.player.set_media(Media)
             self.player.get_media()
             self.o.output(1,"Playing %s-%s" % (pod.p_title, pod.e_title),None)
+            self.current = pod
             self.player.play()
         except Exception as e:
             self.o.output(0,"VLC ERROR: Cannot play %s-%s %s" % (pod.p_title,pod.e_title,pod.mp3,),e)
@@ -55,7 +56,15 @@ class player(Thread):
         self.event_manager = self.player.event_manager()
         self.category = category
         self.event_manager.event_attach(vlc.EventType.MediaPlayerEndReached, self.episode_end)
+        self.current = None
 
     def run(self):
         self.episode_end(None)
-        
+    
+    def is_playing(self):
+        if not self.current == None:
+            self.o.output(1,"Player %s is playing:" % self.port,None)
+            self.current.print_podcast(self.o)
+            return self.player.is_playing()
+        else:
+            self.o.output(1,"Player not playing",None)
