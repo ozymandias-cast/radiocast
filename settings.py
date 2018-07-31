@@ -30,6 +30,7 @@ def init():
     playlist_gaming = queue.Queue()
     playlist_various = queue.Queue()
     playlist_movies = queue.Queue()
+    delta = 2
 
     #gpath = './podcasts/'
     gpath = './podcasts/'

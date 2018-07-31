@@ -157,8 +157,12 @@ class podb:
                     date = d.entries[i].published
                     file2 = d.entries[i].enclosures[0].href
                     description = d.entries[i].description
-                    r=self.insert_episode(pod_id,p_title,e_title,date,file2,description,category)
-                    count = count + r
+                    date_p = d.entries[i].published_parsed.year
+                    date_c = time.now().year
+                    delta = date_c - date_p
+                    if (delta<settings.delta): 
+                        r=self.insert_episode(pod_id,p_title,e_title,date,file2,description,category)
+                        count = count + r
             except Exception as e:
                 self.o.output(2,"Error loading episode %s" % url,e)
                 pass 
