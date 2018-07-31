@@ -52,7 +52,7 @@ class podcast:
     def valid(self,o):
         now = datetime.now()
         delta = now.year - int(self.date[0])
-        #o.output(1,"Episode %s-%s old: %d" % (self.p_title,self.e_title,delta),None)
+        o.output(1,"Episode %s-%s old: %d" % (self.p_title,self.e_title,delta),None)
         return delta<settings.delta
 
 class podb:
