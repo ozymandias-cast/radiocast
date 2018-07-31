@@ -41,9 +41,10 @@ class download(Thread):
                     newFile = open(pod.mp3, "wb")
                     newFile.write(r.content)
                     newFile.close()
+                    pod.type = settings.DOWNLOADED
                 except Exception as e:
                     self.o.output(1,"Failed downloading %s-%s" % (pod.p_title,pod.e_title),e)
-                    pod.mp3 = None
+                    pod.type = settings.NOTPLAYED
                 settings.from_d.put(pod)
                 settings.to_d.task_done()
                 #count = count+1

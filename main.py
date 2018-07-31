@@ -96,6 +96,7 @@ def main():
         o.output(1,"Missing Episodes %d" % len(rows),None)
         for row in rows:
             pod=p.decode_episode(row)
+            pod.type = settings.DOWNLOAD
             if (pod.valid(o)): 
                 settings.to_d.put(pod)
         if settings.to_d.empty(): 
@@ -107,7 +108,8 @@ def main():
         while not settings.from_d.empty():
             try:
                 pod = settings.from_d.get(block = False)
-                if pod.mp3 == None: pass #FIXME: Do something here
+                if not pod.type == settings.DOWNLOADED: 
+                    pass ##FIXME DO SOMETHING HERE
                 else: 
                     o.output(1,"New available episode %s - %s - %s" % (pod.p_title,pod.e_title,pod.date),None)
                     p.write_mp3(pod)

@@ -25,6 +25,15 @@ def init():
     global db
     global pod_xml
     global delta
+    global DOWNLOADED
+    global DOWNLOAD
+    global FILENOTFOUND
+    global URLNOTFOUND
+    global NONE
+    global PLAY
+    global PLAYED
+    global NOTPLAYED
+    global OTHERERROR
 
     to_d = queue.Queue()
     from_d = queue.Queue()
@@ -38,6 +47,16 @@ def init():
     db = gpath + 'radiocast.db'
     pod_xml = gpath + 'Downcast.opml'
     
+    DOWNLOADED = 1
+    DOWNLOAD = 2
+    FILENOTFOUND = 3
+    URLNOTFOUND = 4
+    NONE = 5
+    PLAY = 6
+    PLAYED = 7
+    NOTPLAYED = 8
+    OTHERERROR = 9
+
     import socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))

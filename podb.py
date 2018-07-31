@@ -42,6 +42,7 @@ class podcast:
         self.downlading = row[7]
         self.mp3 = row[8]
         self.category = row[9]
+        self.type = settings.NONE
         return None
 
     def print_podcast(self,o):

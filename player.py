@@ -47,7 +47,7 @@ class player(Thread):
             self.player.play()
         except Exception as e:
             self.o.output(0,"VLC ERROR: Cannot play %s-%s %s" % (pod.p_title,pod.e_title,pod.mp3,),e)
-            pod.mp3 = None
+            pod.type = settings.NOTPLAYED
             settings.from_d.put(pod)
             self.episode_end()
 
