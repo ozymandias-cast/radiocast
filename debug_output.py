@@ -13,9 +13,10 @@ import signal
 class debug:
 
     def __init__(self,tofile,filename):
+        self.tofile = tofile
+        self.filename = filename
         if tofile == True:
             try:
-                self.f = open(self.filename, 'a')
                 self.tofile = True
             except Exception as e:
                 print("Warning: Cannot open file %s (%s)" % (filename,e))
@@ -36,8 +37,15 @@ class debug:
                 str_t2 = str_t + ':' + 'DEBUG:' + str(level)
             if err == None: de = str_t2 + '-' + description
             else: de = str_t2 + '-' + description + '-' + str(err)
+            de = de + '\n'
             if self.tofile == True:
-                self.f.write(de)
+                try:
+                    self.f = open(self.filename, 'a+')
+                    self.f.write(de)
+                    self.f.close()
+                except Exception as e:
+                    print("Cannot write to file %s" % str(e))
+
             else: 
                 print(de.encode('utf-8'))
             if level == 0: 

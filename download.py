@@ -31,7 +31,9 @@ class download(threading.Thread):
         while True:
             #count = 0
             while True:
-                if self.stop.is_set(): return True
+                if self.stop.is_set(): 
+                    settings.o.output(1,"Quitting download thread",None)
+                    return True
                 pod = settings.to_d.get(block=True)
                 settings.o.output(1,"Download queue: %d - Downloading Episode %s %s - %s" % (settings.to_d.qsize(),pod.p_title.encode('utf-8'), pod.e_title.encode('utf-8'), pod.file),None)
                 try:

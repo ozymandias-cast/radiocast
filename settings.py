@@ -37,18 +37,21 @@ def init():
     global OTHERERROR
     global o
 
+
     to_d = queue.Queue()
     from_d = queue.Queue()
     playlist_gaming = queue.Queue()
     playlist_various = queue.Queue()
     playlist_movies = queue.Queue()
     delta = 2
-    o = debug_output.debug(False,'') 
-
     #gpath = './podcasts/'
     gpath = './podcasts/'
     db = gpath + 'radiocast.db'
     pod_xml = gpath + 'Downcast.opml'
+
+    o = debug_output.debug(True,gpath + 'radiocast.log') 
+
+
     
     DOWNLOADED = 1
     DOWNLOAD = 2

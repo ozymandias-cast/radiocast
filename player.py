@@ -80,7 +80,7 @@ class player(Thread):
     
     def is_playing(self):
         if not self.current == None:
-            settings.o.output(1,"Player %s is playing:" % self.port,None)
+            settings.o.output(1,"Player %s is playing (%d): " % (self.port,self.player.is_playing()),None)
             self.current.print_podcast()
             return self.player.is_playing()
         else:
