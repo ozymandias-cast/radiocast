@@ -21,7 +21,7 @@ else:
 class player(Thread):
 
     def event_callback(self,event):
-        self.o.output(0,"VLC ERROR: %s" % str(event),None)
+        settings.o.output(0,"VLC ERROR: %s" % str(event),None)
         self.episode_end(None)
 
     def episode_end(self,event):
@@ -44,24 +44,23 @@ class player(Thread):
             Media = self.instance.media_new(*cmd)
             self.player.set_media(Media)
             self.player.get_media()
-            self.o.output(1,"Playing %s-%s" % (pod.p_title, pod.e_title),None)
+            settings.o.output(1,"Playing %s-%s" % (pod.p_title, pod.e_title),None)
             self.current = pod
             self.player.play()
         except Exception as e:
-            self.o.output(0,"VLC ERROR: Cannot play %s-%s %s" % (pod.p_title,pod.e_title,pod.mp3,),e)
+            settings.o.output(0,"VLC ERROR: Cannot play %s-%s %s" % (pod.p_title,pod.e_title,pod.mp3,),e)
             pod.type = settings.NOTPLAYED
             settings.from_d.put(pod)
             self.episode_end()
 
     
-    def __init__(self,o,dst,port,category):
+    def __init__(self,dst,port,category):
         Thread.__init__(self)
         self.dst = dst
         self.port = port
         self.instance = vlc.Instance()
         self.player = self.instance.media_player_new()
         self.medialist = self.instance.media_list_new() 
-        self.o = o
         self.event_manager = self.player.event_manager()
         self.category = category
         self.event_manager.event_attach(vlc.EventType.MediaPlayerEndReached, self.episode_end)
@@ -79,8 +78,8 @@ class player(Thread):
     
     def is_playing(self):
         if not self.current == None:
-            self.o.output(1,"Player %s is playing:" % self.port,None)
-            self.current.print_podcast(self.o)
+            settings.o.output(1,"Player %s is playing:" % self.port,None)
+            self.current.print_podcast()
             return self.player.is_playing()
         else:
-            self.o.output(1,"Player not playing",None)
+            settings.o.output(1,"Player not playing",None)

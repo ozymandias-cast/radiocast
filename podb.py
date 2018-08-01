@@ -45,20 +45,19 @@ class podcast:
         self.type = settings.NONE
         return None
 
-    def print_podcast(self,o):
+    def print_podcast(self):
         str_date = time.strftime("%a, %d %b %Y %H:%M:%S",self.date)
-        o.output(1,"Podcast: %s-%s (Category: %s) Date:%s URL: %s Filename: %s" % (self.p_title,self.e_title,self.category,str_date,self.file,self.mp3),None)
+        settings.o.output(1,"Podcast: %s-%s (Category: %s) Date:%s URL: %s Filename: %s" % (self.p_title,self.e_title,self.category,str_date,self.file,self.mp3),None)
 
-    def valid(self,o):
+    def valid(self):
         now = datetime.now()
         delta = now.year - int(self.date[0])
-        o.output(1,"Episode %s-%s old: %d" % (self.p_title,self.e_title,delta),None)
+        settings.o.output(1,"Episode %s-%s old: %d" % (self.p_title,self.e_title,delta),None)
         return delta<settings.delta
 
 class podb:
 
-    def __init__(self,file,d):
-        self.o = d
+    def __init__(self,file):
         self.pod_c = 0
 
         try:
@@ -67,34 +66,34 @@ class podb:
             #self.c.execute("DROP TABLE IF EXISTS episodes")
             #self.c.execute("DROP TABLE IF EXISTS podcasts")
         except Exception as e:
-            self.o.output(0,'Failed connecting to DB',e)
+            settings.o.output(0,'Failed connecting to DB',e)
 
         try:
             self.c.execute("CREATE TABLE IF NOT EXISTS podcasts (id INTEGER PRIMARY KEY AUTOINCREMENT, title, url, category)")
             self.c.execute("CREATE TABLE IF NOT EXISTS episodes (pod_id INTEGER, p_title text, e_title text, date text, file text, description text, downloaded text, downloading text, mp3 text, category text)")
             self.conn.commit()        
         except Exception as e:
-            self.o.output(0,'Failed connecting to DB',e)
+            settings.o.output(0,'Failed connecting to DB',e)
 
     def write_mp3(self,pod):
         try:
             self.c.execute("UPDATE episodes SET mp3=?,downloaded=1,downloading=0 WHERE e_title=?",(pod.mp3,pod.e_title))
             self.conn.commit()
         except Exception as e: 
-            self.o.output(0,"Error writing mp3 %s" %pod. e_title,e)
+            settings.o.output(0,"Error writing mp3 %s" %pod. e_title,e)
 
     def insert_episode(self,pod_id,p_title,e_title,date,file,description,category):
         
         try:
             if (self.episode_exists(e_title) == False):
                 str="Inserting episode %s %s %s %s %s" % (pod_id,p_title,e_title,date,file)
-                self.o.output(1,str,None)
+                settings.o.output(1,str,None)
                 self.c.execute("INSERT INTO episodes(pod_id,p_title,e_title,date,file,description,downloaded,downloading,category) VALUES (?,?,?,?,?,?,?,?,?)",(pod_id,p_title,e_title,date,file,description,0,0,category))
                 self.conn.commit()
                 return 1
             else: return 0
         except Exception as e: 
-            self.o.output(0,"Error inserting episode %s-%s" % p_title,e_title,e)
+            settings.o.output(0,"Error inserting episode %s-%s" % p_title,e_title,e)
             return 0
 
     def podcast_exists(self,title):
@@ -107,17 +106,17 @@ class podb:
         self.c.execute("SELECT * FROM episodes WHERE e_title=?", [e_title])
         rows = self.c.fetchall()
         if len(rows)>0: 
-            self.o.output(2,"Episode %s already exists" % e_title,None)
+            settings.o.output(2,"Episode %s already exists" % e_title,None)
             return True
         else: return False
 
     def insert_podcast(self,title,url,category):
         try:
             if (self.podcast_exists(title) == False):
-                self.o.output(1,"Insertng podcast: %s %s" % (title,url),None)
+                settings.o.output(1,"Insertng podcast: %s %s" % (title,url),None)
                 self.c.execute("INSERT INTO podcasts(title,url,category) VALUES (?,?,?)",(title,url,category))
             else:
-                self.o.output(2,"Podcast already exists: %s %s" % (title, url),None)
+                settings.o.output(2,"Podcast already exists: %s %s" % (title, url),None)
         except Exception as e: self.o.output(0,"Error inserting podcast: (%s,%s)" % (title,url),e)
         self.conn.commit()
         return True
@@ -148,7 +147,7 @@ class podb:
         rows = self.c.fetchall()
         if hasattr(ssl, '_create_unverified_context'):
             ssl._create_default_https_context = ssl._create_unverified_context
-        self.o.output(1,"Trying to load %d episodes" % len(rows),None)
+        settings.o.output(1,"Trying to load %d episodes" % len(rows),None)
         for row in rows:
             try:
                 url = row
@@ -158,7 +157,7 @@ class podb:
                 p_title = d.feed.title
                 pod_id = self.lookup_podcast_id(p_title)
             except Exception as e:
-                self.o.output(2,"Error parsing episode %s" % url,e)
+                settings.o.output(2,"Error parsing episode %s" % url,e)
                 pass
             try: 
                 for i in range(0,len(d.entries)):
@@ -169,24 +168,24 @@ class podb:
                     r=self.insert_episode(pod_id,p_title,e_title,date,file2,description,category)
                     count = count + r
             except Exception as e:
-                self.o.output(2,"Error loading episode %s" % url,e)
+                settings.o.output(2,"Error loading episode %s" % url,e)
                 pass 
-        self.o.output(1,"Loaded %s new episodes" % count,None)
+        settings.o.output(1,"Loaded %s new episodes" % count,None)
 
     def print_podcasts(self):
         count = 0
         for row in self.c.execute("SELECT * FROM podcasts"):
-            self.o.output(3,str(row[0]) + '-' + row[1],None)
+            settings.o.output(3,str(row[0]) + '-' + row[1],None)
             count = count + 1
-        self.o.output(1,"Total Podcasts: %s" % count,None)
+        settings.o.output(1,"Total Podcasts: %s" % count,None)
 
     def print_episodes(self):
         count = 0
         for row in self.c.execute("SELECT * FROM episodes"):
             temp = str(row[0]) + '-' + row[1] + '-' + row[2] + '-' + row[3]
-            self.o.output(3,temp,None)
+            settings.o.output(3,temp,None)
             count = count + 1
-        self.o.output(1,"Total Episodes: %s" % count,None)
+        settings.o.output(1,"Total Episodes: %s" % count,None)
 
     def missing_episodes(self):
         self.c.execute("SELECT * FROM episodes WHERE downloaded=0 AND downloading=0")

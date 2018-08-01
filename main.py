@@ -25,12 +25,12 @@ import playlist
 
 def signal_handler(sig, frame):
     if (sig == signal.SIGTERM or sig==signal.SIGINT):
-        o.output(1,"Terminating gracefuly",None)
+        settings.o.output(1,"Terminating gracefuly",None)
         p.close()
         d.stop.set()
         d.join()
     if (sig == signal.SIGUSR1):
-        o.output(1,"Self-destruction",None)
+        settings.o.output(1,"Self-destruction",None)
         p.close()
         d.stop.set()
         d.join()
@@ -39,41 +39,41 @@ def signal_handler(sig, frame):
 
 def main_new_playlist(category):
     if category == 'gaming':
-        o.output(1,"Current Gaming Playlist: %d" % settings.playlist_gaming.qsize(),None)
+        settings.o.output(1,"Current Gaming Playlist: %d" % settings.playlist_gaming.qsize(),None)
         if settings.playlist_gaming.empty():
             rows = p.downloaded_episodes(category)
             if len(rows) > 0: 
-                o.output(1,"Building new playlist (%s) Available episodes: %d" % (category,len(rows)),None)
+                settings.o.output(1,"Building new playlist (%s) Available episodes: %d" % (category,len(rows)),None)
                 l = list()
                 for row in rows:
                     l.append(p.decode_episode(row))
                 res = cp.build_playlist(l,40,category)
                 #cp.print_playlist(category)
-            else: o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
+            else: settings.o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
     if category == 'movies':
-        o.output(1,"Current Movies Playlist: %d" % settings.playlist_movies.qsize(),None)
+        settings.o.output(1,"Current Movies Playlist: %d" % settings.playlist_movies.qsize(),None)
         if settings.playlist_movies.empty():
             rows = p.downloaded_episodes(category)
             if len(rows) > 0: 
-                o.output(1,"Building new playlist (%s) Available episodes: %d" % (category,len(rows)),None)
+                settings.o.output(1,"Building new playlist (%s) Available episodes: %d" % (category,len(rows)),None)
                 l = list()
                 for row in rows:
                     l.append(p.decode_episode(row))
                 res = cp.build_playlist(l,40,category)
                 #cp.print_playlist(category)
-            else: o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
+            else: settings.o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
     if category == 'various':
-        o.output(1,"Current Various Playlist: %d" % settings.playlist_various.qsize(),None)
+        settings.o.output(1,"Current Various Playlist: %d" % settings.playlist_various.qsize(),None)
         if settings.playlist_various.empty():
             rows = p.downloaded_episodes(category)
             if len(rows) > 0: 
-                o.output(1,"Building new playlist (%s) Available episodes: %d" % (category,len(rows)),None)
+                settings.o.output(1,"Building new playlist (%s) Available episodes: %d" % (category,len(rows)),None)
                 l = list()
                 for row in rows:
                     l.append(p.decode_episode(row))
                 res = cp.build_playlist(l,40,category)
                 #cp.print_playlist(category)
-            else: o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
+            else: settings.o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
 
 def main():
 
@@ -106,28 +106,28 @@ def main():
         
         ## Adding episodes to download
         rows = p.missing_episodes()
-        o.output(1,"Missing Episodes %d" % len(rows),None)
+        settings.o.output(1,"Missing Episodes %d" % len(rows),None)
         for row in rows:
             pod=p.decode_episode(row)
             pod.type = settings.DOWNLOAD
-            if (pod.valid(o)): 
+            if (pod.valid()): 
                 settings.to_d.put(pod)
         if settings.to_d.empty(): 
             r=p.housekeeping_downloading()
-            o.output(1,"Housekeeping Downloading episodes: %d" % r,None)
+            settings.o.output(1,"Housekeeping Downloading episodes: %d" % r,None)
         
         ## Storing downloaded episodes
-        o.output(1,"Downloaded episodes to be stored %d" % settings.from_d.qsize(), None)
+        settings.o.output(1,"Downloaded episodes to be stored %d" % settings.from_d.qsize(), None)
         while not settings.from_d.empty():
             try:
                 pod = settings.from_d.get(block = False)
                 if not pod.type == settings.DOWNLOADED: 
                     pass ##FIXME DO SOMETHING HERE
                 else: 
-                    o.output(1,"New available episode %s - %s - %s" % (pod.p_title,pod.e_title,pod.date),None)
+                    settings.o.output(1,"New available episode %s - %s - %s" % (pod.p_title,pod.e_title,pod.date),None)
                     p.write_mp3(pod)
             except Exception as e:
-                o.output(1,"Failed to download episode",e)
+                settings.o.output(1,"Failed to download episode",e)
             settings.from_d.task_done()
 
         ## Re-building playlist
@@ -147,28 +147,27 @@ def main():
         minlen = min(settings.playlist_gaming.qsize(),settings.playlist_movies.qsize(),settings.playlist_various.qsize())
         if minlen > 0:
             sleep_time = 10*minlen
-            o.output(1,"Already playing, sleeping for %ds" % sleep_time,None)
+            settings.o.output(1,"Already playing, sleeping for %ds" % sleep_time,None)
             time.sleep(sleep_time)
         
         if not settings.to_d.empty():
             sleep_time = 100
-            o.output(1,"Already downloading, sleeping for %ds (to_d queue size: %d)" % (sleep_time,settings.to_d.qsize()),None)
+            settings.o.output(1,"Already downloading, sleeping for %ds (to_d queue size: %d)" % (sleep_time,settings.to_d.qsize()),None)
             time.sleep(sleep_time)
 
 if __name__ == "__main__":
-    try: 
+    #try: 
         if sys.version[0] == '2': import Queue as queue
         else: import queue as queue
         settings.init()
-        o = debug_output.debug(False,'')  
-        p = podb.podb(settings.db,o)
-        cp = playlist.cplaylist(o)
-        d = download.download(o)
-        play_gaming = player.player(o,settings.ip,settings.port_gaming,'gaming')
-        play_movies = player.player(o,settings.ip,settings.port_movies,'movies')
-        play_various = player.player(o,settings.ip,settings.port_various,'various')
+        p = podb.podb(settings.db)
+        cp = playlist.cplaylist()
+        d = download.download()
+        play_gaming = player.player(settings.ip,settings.port_gaming,'gaming')
+        play_movies = player.player(settings.ip,settings.port_movies,'movies')
+        play_various = player.player(settings.ip,settings.port_various,'various')
         main()
-    except Exception as e:
-        print("Exception not handled in main: %s" % str(e))
-        sys.exit(0)
+    #except Exception as e:
+        #print("Exception not handled in main: %s" % str(e))
+        #sys.exit(0)
 

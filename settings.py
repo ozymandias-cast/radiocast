@@ -5,6 +5,7 @@
 ###################################################################
 
 import sys
+import debug_output
 is_py2 = sys.version[0] == '2'
 if is_py2:
     import Queue as queue
@@ -34,6 +35,7 @@ def init():
     global PLAYED
     global NOTPLAYED
     global OTHERERROR
+    global o
 
     to_d = queue.Queue()
     from_d = queue.Queue()
@@ -41,6 +43,7 @@ def init():
     playlist_various = queue.Queue()
     playlist_movies = queue.Queue()
     delta = 2
+    o = debug_output.debug(False,'') 
 
     #gpath = './podcasts/'
     gpath = './podcasts/'

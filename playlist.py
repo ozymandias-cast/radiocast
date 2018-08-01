@@ -11,8 +11,8 @@ from random import shuffle
 
 
 class cplaylist:
-    def __init__(self,o):
-        self.o = o
+    def __init__(self):
+        pass
 
     def build_playlist(self,l,length,category):
         if len(l) == 0: return 0
@@ -31,10 +31,10 @@ class cplaylist:
         if category == 'gaming': playlist = settings.playlist_gaming
         if category == 'various': playlist = settings.playlist_various
         if category == 'movies': playlist = settings.playlist_movies
-        self.o.output(1,"PLAYLIST %s -------------------------------------------------------------------------------" % category,None)
+        settings.o.output(1,"PLAYLIST %s -------------------------------------------------------------------------------" % category,None)
         while not playlist.empty():
             pod=playlist.get()
-            pod.print_podcast(self.o)
+            pod.print_podcast()
 
         
 

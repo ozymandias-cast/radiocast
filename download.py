@@ -22,10 +22,9 @@ else:
 
 
 class download(threading.Thread):
-    def __init__(self,o):
+    def __init__(self):
         threading.Thread.__init__(self)
         self.stop = threading.Event()
-        self.o = o
         return None
 
     def run(self):
@@ -34,7 +33,7 @@ class download(threading.Thread):
             while True:
                 if self.stop.is_set(): return True
                 pod = settings.to_d.get(block=True)
-                self.o.output(1,"Download queue: %d - Downloading Episode %s %s - %s" % (settings.to_d.qsize(),pod.p_title.encode('utf-8'), pod.e_title.encode('utf-8'), pod.file),None)
+                settings.o.output(1,"Download queue: %d - Downloading Episode %s %s - %s" % (settings.to_d.qsize(),pod.p_title.encode('utf-8'), pod.e_title.encode('utf-8'), pod.file),None)
                 try:
                     r = requests.get(pod.file, allow_redirects=True, timeout=10)
                     hash_object = hashlib.sha1(pod.e_title.encode('utf-8'))
@@ -44,12 +43,10 @@ class download(threading.Thread):
                     newFile.close()
                     pod.type = settings.DOWNLOADED
                 except Exception as e:
-                    self.o.output(1,"Failed downloading %s-%s" % (pod.p_title,pod.e_title),e)
+                    settings.o.output(1,"Failed downloading %s-%s" % (pod.p_title,pod.e_title),e)
                     pod.type = settings.NOTPLAYED
                 settings.from_d.put(pod)
                 settings.to_d.task_done()
-                #count = count+1
-            #self.o.output(1,"%d episodes downloaded" % count,None)
-            #time.sleep(10)
+
 
 
