@@ -5,6 +5,7 @@
 ###################################################################
 
 import sys
+import signal
 sys.path.append("/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/site-packages/")
 sys.path.append("./")
 import feedparser
@@ -21,6 +22,19 @@ import datetime
 import settings
 import player
 import playlist
+
+def signal_handler(sig, frame):
+    if (sig == signal.SIGTERM or sig==signal.SIGINT):
+        o.output(1,"Terminating gracefuly",None)
+        p.close()
+        d.stop.set()
+        d.join()
+    if (sig == signal.SIGUSR1):
+        o.output(1,"Self-destruction",None)
+        p.close()
+        d.stop.set()
+        d.join()
+    sys.exit(0)
 
 
 def main_new_playlist(category):
@@ -63,17 +77,16 @@ def main_new_playlist(category):
 
 def main():
 
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+    
     p.load_podcasts(settings.pod_xml)
     p.load_episodes()
 
-    d = download.download(o)
     d.start()
 
-    play_gaming = player.player(o,settings.ip,settings.port_gaming,'gaming')
     play_gaming.start()
-    play_movies = player.player(o,settings.ip,settings.port_movies,'movies')
     play_movies.start()
-    play_various = player.player(o,settings.ip,settings.port_various,'various')
     play_various.start()
 
     ## Building playlist Gaming
@@ -150,6 +163,10 @@ if __name__ == "__main__":
         o = debug_output.debug(False,'')  
         p = podb.podb(settings.db,o)
         cp = playlist.cplaylist(o)
+        d = download.download(o)
+        play_gaming = player.player(o,settings.ip,settings.port_gaming,'gaming')
+        play_movies = player.player(o,settings.ip,settings.port_movies,'movies')
+        play_various = player.player(o,settings.ip,settings.port_various,'various')
         main()
     except Exception as e:
         print("Exception not handled in main: %s" % str(e))

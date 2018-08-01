@@ -216,3 +216,7 @@ class podb:
         num=random.randint(0,len(rows)-1)
         if len(rows) == 0: return None
         else: return self.decode_episode(rows[num])
+
+    def close(self):
+        self.conn.commit()
+        self.conn.close()

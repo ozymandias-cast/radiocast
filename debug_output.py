@@ -7,6 +7,8 @@
 
 import datetime
 import sys
+import os
+import signal
 
 class debug:
 
@@ -38,6 +40,8 @@ class debug:
                 self.f.write(de)
             else: 
                 print(de.encode('utf-8'))
-            if level == 0: sys.exit(-1)
+            if level == 0: 
+                os.kill(os.getpid(), signal.SIGUSR1)
+
     
         

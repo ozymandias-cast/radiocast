@@ -9,7 +9,7 @@ import debug_output
 import requests
 import unicodedata
 import hashlib
-from threading import Thread
+import threading
 import settings
 import time
 import sys
@@ -21,9 +21,10 @@ else:
 
 
 
-class download(Thread):
+class download(threading.Thread):
     def __init__(self,o):
-        Thread.__init__(self)
+        threading.Thread.__init__(self)
+        self.stop = threading.Event()
         self.o = o
         return None
 
@@ -31,9 +32,9 @@ class download(Thread):
         while True:
             #count = 0
             while True:
-                self.o.output(1,"Retrieving one elment from the queue %d" % settings.to_d.qsize(),None)
+                if self.stop.is_set(): return True
                 pod = settings.to_d.get(block=True)
-                self.o.output(1,"Downloading Episode %s %s - %s" % (pod.p_title.encode('utf-8'), pod.e_title.encode('utf-8'), pod.file),None)
+                self.o.output(1,"Download queue: %d - Downloading Episode %s %s - %s" % (settings.to_d.qsize(),pod.p_title.encode('utf-8'), pod.e_title.encode('utf-8'), pod.file),None)
                 try:
                     r = requests.get(pod.file, allow_redirects=True, timeout=10)
                     hash_object = hashlib.sha1(pod.e_title.encode('utf-8'))

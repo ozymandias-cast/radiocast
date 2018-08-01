@@ -21,8 +21,7 @@ else:
 class player(Thread):
 
     def event_callback(self,event):
-        self.o.output(1,"VLC ERROR: %s" % str(event),None)
-        os._exit()
+        self.o.output(0,"VLC ERROR: %s" % str(event),None)
         self.episode_end(None)
 
     def episode_end(self,event):
@@ -32,7 +31,8 @@ class player(Thread):
             if (self.category == 'movies'): pod = settings.playlist_movies.get()  
             cmd = [pod.mp3]
             #cmd.append("sout=#duplicate{dst=rtp{dst=%s,port=%s}" % (self.dst,self.port))
-            cmd.append("sout=#standard{access=http,mux=ogg,dst=%s:%s}" % (self.dst,self.port))
+            #cmd.append("sout=#standard{access=http,mux=ogg,dst=%s:%s}" % (self.dst,self.port))
+            cmd.append("sout=#standard{access=http,mux=ts,dst=%s:%s}" % (self.dst,self.port))
             #cmd.append("no-sout-rtp-sap")    
             #cmd.append("no-sout-standard-sap")
             #cmd.append("sout-rtp-caching=1000")
@@ -51,7 +51,6 @@ class player(Thread):
             self.o.output(0,"VLC ERROR: Cannot play %s-%s %s" % (pod.p_title,pod.e_title,pod.mp3,),e)
             pod.type = settings.NOTPLAYED
             settings.from_d.put(pod)
-            os._exit()
             self.episode_end()
 
     
