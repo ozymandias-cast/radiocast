@@ -11,6 +11,7 @@ import feedparser
 import vlc
 from threading import Thread
 import settings
+import os
 is_py2 = sys.version[0] == '2'
 if is_py2:
     import Queue as queue
@@ -21,6 +22,7 @@ class player(Thread):
 
     def event_callback(self,event):
         self.o.output(1,"VLC ERROR: %s" % str(event),None)
+        os._exit()
         self.episode_end(None)
 
     def episode_end(self,event):
@@ -49,6 +51,7 @@ class player(Thread):
             self.o.output(0,"VLC ERROR: Cannot play %s-%s %s" % (pod.p_title,pod.e_title,pod.mp3,),e)
             pod.type = settings.NOTPLAYED
             settings.from_d.put(pod)
+            os._exit()
             self.episode_end()
 
     
