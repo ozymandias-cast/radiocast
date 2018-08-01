@@ -11,6 +11,7 @@ import feedparser
 import vlc
 from threading import Thread
 import settings
+import time
 import os
 is_py2 = sys.version[0] == '2'
 if is_py2:
@@ -75,6 +76,7 @@ class player(Thread):
 
     def run(self):
         self.episode_end(None)
+        while True: time.sleep(36000)
     
     def is_playing(self):
         if not self.current == None:
