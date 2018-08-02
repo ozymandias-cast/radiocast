@@ -50,6 +50,10 @@ class player(Thread):
             settings.o.output(1,"Playing %s-%s" % (pod.p_title, pod.e_title),None)
             self.current = pod
             self.player.play()
+            time.sleep(2)
+            self.duration = self.player.get_length() / 1000
+            settings.o.output(1,"Media duration: %d" % self.duration,None)
+
         except Exception as e:
             settings.o.output(0,"VLC ERROR: Cannot play %s-%s %s" % (pod.p_title,pod.e_title,pod.mp3,),e)
             pod.type = settings.NOTPLAYED
@@ -66,7 +70,7 @@ class player(Thread):
         self.medialist = self.instance.media_list_new() 
         self.event_manager = self.player.event_manager()
         self.category = category
-        self.event_manager.event_attach(vlc.EventType.MediaPlayerEndReached, self.episode_end)
+        #self.event_manager.event_attach(vlc.EventType.MediaPlayerEndReached, self.episode_end)
         self.event_manager.event_attach(vlc.EventType.MediaPlayerEncounteredError, self.event_callback)
         self.event_manager.event_attach(vlc.EventType.MediaPlayerNothingSpecial, self.event_callback)
         self.event_manager.event_attach(vlc.EventType.MediaPlayerUncorked, self.event_callback)
@@ -75,8 +79,38 @@ class player(Thread):
         self.current = None
 
     def run(self):
-        self.episode_end(None)
-        while True: time.sleep(36000)
+        while True: 
+            try: 
+                if (self.category == 'gaming'): pod = settings.playlist_gaming.get()
+                if (self.category == 'various'): pod = settings.playlist_various.get()
+                if (self.category == 'movies'): pod = settings.playlist_movies.get() 
+                pod.print_podcast()
+                cmd = [pod.mp3]
+                #cmd.append("sout=#duplicate{dst=rtp{dst=%s,port=%s}" % (self.dst,self.port))
+                #cmd.append("sout=#standard{access=http,mux=ogg,dst=%s:%s}" % (self.dst,self.port))
+                cmd.append("sout=#standard{access=http,mux=ts,dst=%s:%s}" % (self.dst,self.port))
+                #cmd.append("no-sout-rtp-sap")    
+                #cmd.append("no-sout-standard-sap")
+                #cmd.append("sout-rtp-caching=1000")
+                cmd.append("sout-mux-caching=1000")
+                #cmd.append("sout-rtp-name=Hola")
+                #cmd.append("sout-rtp-description=Hola")
+                #cmd.append("sout-rtp-proto=tcp")
+                cmd.append("sout-keep")                
+                Media = self.instance.media_new(*cmd)
+                self.player.set_media(Media)
+                self.player.get_media()
+                settings.o.output(1,"Playing %s-%s" % (pod.p_title, pod.e_title),None)
+                self.current = pod
+                self.player.play()
+                time.sleep(2)
+                self.duration = (self.player.get_length() / 1000)-1
+                settings.o.output(1,"Media duration: %d" % self.duration,None)
+                time.sleep(self.duration)
+            except Exception as e:
+                settings.o.output(0,"VLC ERROR: Cannot play %s-%s %s" % (pod.p_title,pod.e_title,pod.mp3,),e)
+                pod.type = settings.NOTPLAYED
+                settings.from_d.put(pod)
     
     def is_playing(self):
         if not self.current == None:
