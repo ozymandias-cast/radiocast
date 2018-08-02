@@ -112,6 +112,10 @@ def main():
             pod.type = settings.DOWNLOAD
             if (pod.valid()): 
                 settings.to_d.put(pod)
+            else:
+                settings.o.output(1,"Episode too old:",None)
+                pod.print_podcast()
+                p.too_old(pod)
         if settings.to_d.empty(): 
             r=p.housekeeping_downloading()
             settings.o.output(1,"Housekeeping Downloading episodes: %d" % r,None)

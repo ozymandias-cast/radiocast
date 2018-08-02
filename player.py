@@ -29,7 +29,9 @@ class player(Thread):
         try: 
             if (self.category == 'gaming'): pod = settings.playlist_gaming.get()
             if (self.category == 'various'): pod = settings.playlist_various.get()
-            if (self.category == 'movies'): pod = settings.playlist_movies.get()  
+            if (self.category == 'movies'): pod = settings.playlist_movies.get() 
+            settings.o.output(1,"Playing a new podcast:",None)
+            pod.print_podcast()
             cmd = [pod.mp3]
             #cmd.append("sout=#duplicate{dst=rtp{dst=%s,port=%s}" % (self.dst,self.port))
             #cmd.append("sout=#standard{access=http,mux=ogg,dst=%s:%s}" % (self.dst,self.port))
@@ -70,8 +72,6 @@ class player(Thread):
         self.event_manager.event_attach(vlc.EventType.MediaPlayerUncorked, self.event_callback)
         self.event_manager.event_attach(vlc.EventType.MediaPlayerCorked, self.event_callback)
         self.event_manager.event_attach(vlc.EventType.VlmMediaInstanceStatusError , self.event_callback)
-
-
         self.current = None
 
     def run(self):

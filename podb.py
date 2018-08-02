@@ -195,10 +195,12 @@ class podb:
         return rows
 
     def housekeeping_downloading(self):
-        self.c.execute("UPDATE episodes SET downloading=0 WHERE downloading=1")
+        self.c.execute("SELECT * FROM episodes WHERE downloading=1")
         rows = self.c.fetchall()
+        r = len(rows)
+        self.c.execute("UPDATE episodes SET downloading=0 WHERE downloading=1")
         self.conn.commit()
-        return len(rows)
+        return r
 
     def downloaded_episodes(self,category):
         self.c.execute("SELECT * FROM episodes WHERE downloaded=1 AND downloading=0 AND category=?",[category])
@@ -216,6 +218,11 @@ class podb:
         if len(rows) == 0: return None
         else: return self.decode_episode(rows[num])
 
+    def too_old(self,pod)
+        self.c.execute("UPDATE episodes SET downloading=2 WHERE e_title=?".pod.e_title)
+        self.conn.commit()
+        return True
+        
     def close(self):
         self.conn.commit()
         self.conn.close()
