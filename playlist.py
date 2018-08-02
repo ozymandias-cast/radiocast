@@ -18,10 +18,14 @@ class cplaylist:
         if len(l) == 0: return 0
         minl = min(len(l),length)
         s = sorted(l, key=lambda podcast: podcast.date, reverse=True)
+        for i in range(0,5):
+            pod=random.choice(s[minl:])
+            if (category == 'gaming'): settings.playlist_gaming.put(pod)
+            if (category == 'various'): settings.playlist_various.put(pod)
+            if (category == 'movies'): settings.playlist_movies.put(pod)       
         s=s[:minl]
         shuffle(s)
         for i in range(0,len(s)):
-            str_date = time.strftime("%a, %d %b %Y %H:%M:%S",s[i].date)
             if (category == 'gaming'): settings.playlist_gaming.put(s[i])
             if (category == 'various'): settings.playlist_various.put(s[i])
             if (category == 'movies'): settings.playlist_movies.put(s[i])

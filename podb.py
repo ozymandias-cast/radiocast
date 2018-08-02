@@ -191,7 +191,7 @@ class podb:
     def missing_episodes(self):
         self.c.execute("SELECT * FROM episodes WHERE downloaded=0 AND downloading=0")
         rows = self.c.fetchall()
-        self.c.execute("UPDATE episodes SET downloading=1 WHERE downloaded=0")
+        self.c.execute("UPDATE episodes SET downloading=1 WHERE downloaded=0 AND downloading=0")
         self.conn.commit()
         return rows
 
