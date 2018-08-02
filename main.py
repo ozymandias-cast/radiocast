@@ -28,13 +28,9 @@ def signal_handler(sig, frame):
     if (sig == signal.SIGTERM or sig==signal.SIGINT):
         settings.o.output(1,"Terminating gracefuly",None)
         p.close()
-        d.stop.set()
-        d.join()
     if (sig == signal.SIGUSR1):
         settings.o.output(1,"Self-destruction",None)
         p.close()
-        d.stop.set()
-        d.join()
     os._exit(0)
 
 
@@ -127,7 +123,17 @@ def main():
             try:
                 pod = settings.from_d.get(block = False)
                 if not pod.type == settings.DOWNLOADED: 
-                    pass ##FIXME DO SOMETHING HERE
+                    if pod.type == settings.FILENOTFOUND:
+                        if p.file_exists(pod):
+                            settings.o.output(1,"File %s (%s-%s) cannot be played" % (pod.mp3,pod.p_title,pod.e_title),None)
+                            p.remove_file(pod)
+                            p.do_not_play(pod)
+                        else:
+                            settings.o.output(1,"Episode %s (%s-%s) exist but file not found" % (pod.mp3,pod.p_title,pod.e_title),None)
+                            p.redownload(pod)
+                    if pod.type == settings.URLNOTFOUND:
+                        settings.o.output(1,"Episode (%s-%s) cannot be downloaded" % (pod.p_title,pod.e_title),None) 
+                        p.do_not_download(pod)
                 else: 
                     settings.o.output(1,"New available episode %s - %s - %s" % (pod.p_title,pod.e_title,pod.date),None)
                     p.write_mp3(pod)

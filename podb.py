@@ -224,6 +224,26 @@ class podb:
         self.conn.commit()
         return True
 
+    def do_not_play(self,pod):
+        self.c.execute("UPDATE episodes SET downloading=3 WHERE e_title=?",[pod.e_title])
+        self.conn.commit()
+        return True
+
+    def redownload(self,pod):
+        self.c.execute("UPDATE episodes SET downloading=0,downloaded=0 WHERE e_title=?",[pod.e_title])
+        self.conn.commit()
+        return True
+
+    def redownload(self,pod):
+        self.c.execute("UPDATE episodes SET downloading=4 WHERE e_title=?",[pod.e_title])
+        self.conn.commit()
+        return True
+
     def close(self):
         self.conn.commit()
         self.conn.close()
+
+    def remove_file(self,pod):
+        filename = settings.gpath + pod.mp3
+        os.remove(filename)
+

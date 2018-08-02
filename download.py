@@ -46,7 +46,7 @@ class download(threading.Thread):
                     pod.type = settings.DOWNLOADED
                 except Exception as e:
                     settings.o.output(1,"Failed downloading %s-%s" % (pod.p_title,pod.e_title),e)
-                    pod.type = settings.NOTPLAYED
+                    pod.type = settings.URLNOTFOUND
                 settings.from_d.put(pod)
                 settings.to_d.task_done()
 

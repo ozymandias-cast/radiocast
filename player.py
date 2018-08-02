@@ -109,7 +109,7 @@ class player(Thread):
                 time.sleep(self.duration)
             except Exception as e:
                 settings.o.output(0,"VLC ERROR: Cannot play %s-%s %s" % (pod.p_title,pod.e_title,pod.mp3,),e)
-                pod.type = settings.NOTPLAYED
+                pod.type = settings.FILENOTFOUND
                 settings.from_d.put(pod)
     
     def is_playing(self):
