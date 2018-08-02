@@ -49,8 +49,8 @@ def init():
     db = gpath + 'radiocast.db'
     pod_xml = gpath + 'Downcast.opml'
 
-    o = debug_output.debug(True,gpath + 'radiocast.log') 
-    #o = debug_output.debug(False,'') 
+    #o = debug_output.debug(True,gpath + 'radiocast.log') 
+    o = debug_output.debug(False,'') 
     
     DOWNLOADED = 1
     DOWNLOAD = 2
