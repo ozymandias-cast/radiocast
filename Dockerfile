@@ -38,6 +38,6 @@ EXPOSE 4445
 EXPOSE 4446
 VOLUME /podcasts
 
-#CMD [ "python", "/main.py" ]
+CMD [ "python", "/main.py" ]
 
 
