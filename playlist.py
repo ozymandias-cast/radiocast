@@ -8,6 +8,7 @@ import time
 import podb
 import settings
 from random import shuffle
+from random import choice
 
 
 class cplaylist:
@@ -19,7 +20,7 @@ class cplaylist:
         minl = min(len(l),length)
         s = sorted(l, key=lambda podcast: podcast.date, reverse=True)
         for i in range(0,5):
-            pod=random.choice(s[minl:])
+            pod=choice(s[minl:])
             if (category == 'gaming'): settings.playlist_gaming.put(pod)
             if (category == 'various'): settings.playlist_various.put(pod)
             if (category == 'movies'): settings.playlist_movies.put(pod)       
