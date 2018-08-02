@@ -15,6 +15,7 @@ import xml.etree.ElementTree as ET
 import random
 import sqlite3 as sql
 import podb
+import os
 import debug_output
 import download
 from threading import Thread
@@ -34,7 +35,7 @@ def signal_handler(sig, frame):
         p.close()
         d.stop.set()
         d.join()
-    sys.exit(0)
+    os._exit(0)
 
 
 def main_new_playlist(category):

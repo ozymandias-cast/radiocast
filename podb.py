@@ -15,6 +15,7 @@ import sqlite3 as sql
 import debug_output
 import ssl
 import settings
+import os
 from datetime import datetime
 
 
@@ -218,11 +219,11 @@ class podb:
         if len(rows) == 0: return None
         else: return self.decode_episode(rows[num])
 
-    def too_old(self,pod)
-        self.c.execute("UPDATE episodes SET downloading=2 WHERE e_title=?".pod.e_title)
+    def too_old(self,pod):
+        self.c.execute("UPDATE episodes SET downloading=2 WHERE e_title=?",[pod.e_title])
         self.conn.commit()
         return True
-        
+
     def close(self):
         self.conn.commit()
         self.conn.close()
