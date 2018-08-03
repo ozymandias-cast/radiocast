@@ -3,3 +3,4 @@ podcasts/*
 run.sh
 .DS_Store
 *.pyc
+*.sqlite

@@ -36,6 +36,10 @@ def init():
     global NOTPLAYED
     global OTHERERROR
     global o
+    global wait_per_download
+    global wait_per_play
+
+
 
 
     to_d = queue.Queue()
@@ -52,6 +56,9 @@ def init():
     #o = debug_output.debug(True,gpath + 'radiocast.log') 
     o = debug_output.debug(False,'') 
     
+    wait_per_download = 100
+    wait_per_play = 1200
+
     DOWNLOADED = 1
     DOWNLOAD = 2
     FILENOTFOUND = 3

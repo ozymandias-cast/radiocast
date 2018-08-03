@@ -45,6 +45,8 @@ class debug:
                     self.f.close()
                 except Exception as e:
                     print("Cannot write to file %s" % str(e))
+                    sys.stdout.flush()
+                    sys.stderr.flush()
 
             else: 
                 print(de.encode('utf-8'))

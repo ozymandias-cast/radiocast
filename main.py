@@ -37,7 +37,7 @@ def signal_handler(sig, frame):
 def main_new_playlist(category):
     if category == 'gaming':
         settings.o.output(1,"Current Gaming Playlist: %d" % settings.playlist_gaming.qsize(),None)
-        if settings.playlist_gaming.empty():
+        if settings.playlist_gaming.qisze()<5:
             rows = p.downloaded_episodes(category)
             if len(rows) > 0: 
                 settings.o.output(1,"Building new playlist (%s) Available episodes: %d" % (category,len(rows)),None)
@@ -49,7 +49,7 @@ def main_new_playlist(category):
             else: settings.o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
     if category == 'movies':
         settings.o.output(1,"Current Movies Playlist: %d" % settings.playlist_movies.qsize(),None)
-        if settings.playlist_movies.empty():
+        if settings.playlist_movies.qisze()<5:
             rows = p.downloaded_episodes(category)
             if len(rows) > 0: 
                 settings.o.output(1,"Building new playlist (%s) Available episodes: %d" % (category,len(rows)),None)
@@ -61,7 +61,7 @@ def main_new_playlist(category):
             else: settings.o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
     if category == 'various':
         settings.o.output(1,"Current Various Playlist: %d" % settings.playlist_various.qsize(),None)
-        if settings.playlist_various.empty():
+        if settings.playlist_various.qisze()<5:
             rows = p.downloaded_episodes(category)
             if len(rows) > 0: 
                 settings.o.output(1,"Building new playlist (%s) Available episodes: %d" % (category,len(rows)),None)
@@ -156,13 +156,13 @@ def main():
 
         ## Sleeping
         minlen = min(settings.playlist_gaming.qsize(),settings.playlist_movies.qsize(),settings.playlist_various.qsize())
-        if minlen > 0:
-            sleep_time = 10*minlen
+        if minlen > 5:
+            sleep_time = settings.wait_per_play*minlen
             settings.o.output(1,"Already playing, sleeping for %ds" % sleep_time,None)
             time.sleep(sleep_time)
         
         if not settings.to_d.empty():
-            sleep_time = 100
+            sleep_time = settings.wait_per_download
             settings.o.output(1,"Already downloading, sleeping for %ds (to_d queue size: %d)" % (sleep_time,settings.to_d.qsize()),None)
             time.sleep(sleep_time)
 
