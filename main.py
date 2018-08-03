@@ -37,7 +37,7 @@ def signal_handler(sig, frame):
 def main_new_playlist(category):
     if category == 'gaming':
         settings.o.output(1,"Current Gaming Playlist: %d" % settings.playlist_gaming.qsize(),None)
-        if settings.playlist_gaming.qisze()<5:
+        if settings.playlist_gaming.qsize()<5:
             rows = p.downloaded_episodes(category)
             if len(rows) > 0: 
                 settings.o.output(1,"Building new playlist (%s) Available episodes: %d" % (category,len(rows)),None)
@@ -49,7 +49,7 @@ def main_new_playlist(category):
             else: settings.o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
     if category == 'movies':
         settings.o.output(1,"Current Movies Playlist: %d" % settings.playlist_movies.qsize(),None)
-        if settings.playlist_movies.qisze()<5:
+        if settings.playlist_movies.qsize()<5:
             rows = p.downloaded_episodes(category)
             if len(rows) > 0: 
                 settings.o.output(1,"Building new playlist (%s) Available episodes: %d" % (category,len(rows)),None)
@@ -61,7 +61,7 @@ def main_new_playlist(category):
             else: settings.o.output(1,"Cannot start playing %s, no mp3 downloaded" % category,None)
     if category == 'various':
         settings.o.output(1,"Current Various Playlist: %d" % settings.playlist_various.qsize(),None)
-        if settings.playlist_various.qisze()<5:
+        if settings.playlist_various.qsize()<5:
             rows = p.downloaded_episodes(category)
             if len(rows) > 0: 
                 settings.o.output(1,"Building new playlist (%s) Available episodes: %d" % (category,len(rows)),None)
