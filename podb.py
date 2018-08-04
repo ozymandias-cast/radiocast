@@ -199,6 +199,10 @@ class podb:
         self.c.execute("SELECT * FROM episodes WHERE downloading=1")
         rows = self.c.fetchall()
         r = len(rows)
+        for row in rows:
+            pod=self.decode_episode(row)
+            settings.o.output(1,"Removing partially downloaded file %s-%s %s" % (pod.p_title,pod.e_title,pod.mp3),None)
+            self.remove_file(pod)
         self.c.execute("UPDATE episodes SET downloading=0 WHERE downloading=1")
         self.conn.commit()
         return r
@@ -244,6 +248,11 @@ class podb:
         self.conn.close()
 
     def remove_file(self,pod):
-        filename = settings.gpath + pod.mp3
-        os.remove(filename)
+        if pod.mp3 == None: return False
+        filename = settings.gpath + str(pod.mp3)
+        try:
+            os.remove(filename)
+        except Exception as e:
+            settings.o.output(1,"Trying to remove file that does not exists: %s-%s %s" % (pod.p_title,pod.e_title,pod.mp3),None)
+        return True
 
