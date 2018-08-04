@@ -57,7 +57,7 @@ def init():
     o = debug_output.debug(False,'') 
     
     wait_per_download = 100
-    wait_per_play = 1200
+    wait_per_play = 3600
 
     DOWNLOADED = 1
     DOWNLOAD = 2

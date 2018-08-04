@@ -157,7 +157,7 @@ def main():
         ## Sleeping
         minlen = min(settings.playlist_gaming.qsize(),settings.playlist_movies.qsize(),settings.playlist_various.qsize())
         if minlen > 5:
-            sleep_time = settings.wait_per_play*minlen
+            sleep_time = settings.wait_per_play
             settings.o.output(1,"Already playing, sleeping for %ds" % sleep_time,None)
             time.sleep(sleep_time)
         
