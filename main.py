@@ -174,13 +174,13 @@ if __name__ == "__main__":
         p = podb.podb(settings.db)
         cp = playlist.cplaylist()
         d = download.download()
-        #play_gaming = player.player(settings.ip,settings.port_gaming,'gaming')
-        #play_movies = player.player(settings.ip,settings.port_movies,'movies')
-        #play_various = player.player(settings.ip,settings.port_various,'various')
+        play_gaming = player.player(settings.ip,settings.port_gaming,'gaming')
+        play_movies = player.player(settings.ip,settings.port_movies,'movies')
+        play_various = player.player(settings.ip,settings.port_various,'various')
         
-        play_gaming = player.player("224.0.0.1",settings.port_gaming,'gaming')
-        play_movies = player.player("224.0.0.2",settings.port_movies,'movies')
-        play_various = player.player("224.0.0.3",settings.port_various,'various')       
+        #play_gaming = player.player("224.0.0.1",settings.port_gaming,'gaming')
+        #play_movies = player.player("224.0.0.2",settings.port_movies,'movies')
+        #play_various = player.player("224.0.0.3",settings.port_various,'various')       
         
         main()
     #except Exception as e:
