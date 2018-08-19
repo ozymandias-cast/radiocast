@@ -103,7 +103,7 @@ class player(Thread):
                 cmd.append("no-sout-standard-sap")
                 cmd.append("sout-rtp-caching=1000")
                 cmd.append("sout-mux-caching=1000")
-                cmd.append("sout-rtp-proto=tcp")
+                cmd.append("sout-rtp-proto=udp")
 
                 Media = self.instance.media_new(*cmd)
                 self.player.set_media(Media)
