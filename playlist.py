@@ -18,9 +18,10 @@ class cplaylist:
     def build_playlist(self,l,length,category):
         if len(l) == 0: return 0
         minl = min(len(l),length)
+        if minl == 0: return 0
         s = sorted(l, key=lambda podcast: podcast.date, reverse=True)
         for i in range(0,5):
-            pod=choice(s[minl:])
+            pod=choice(s[:minl])
             if (category == 'gaming'): settings.playlist_gaming.put(pod)
             if (category == 'various'): settings.playlist_various.put(pod)
             if (category == 'movies'): settings.playlist_movies.put(pod)       

@@ -238,7 +238,7 @@ class podb:
         self.conn.commit()
         return True
 
-    def redownload(self,pod):
+    def do_not_download(self,pod):
         self.c.execute("UPDATE episodes SET downloading=4 WHERE e_title=?",[pod.e_title])
         self.conn.commit()
         return True
@@ -255,4 +255,10 @@ class podb:
         except Exception as e:
             settings.o.output(1,"Trying to remove file that does not exists: %s-%s %s" % (pod.p_title,pod.e_title,pod.mp3),None)
         return True
+
+    def file_exists(self,pod):
+        if pod.mp3 == None: return False
+        filename = settings.gpath + str(pod.mp3)
+        return os.path.isfile(filename) 
+
 

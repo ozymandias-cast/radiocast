@@ -110,13 +110,17 @@ class player(Thread):
                 self.player.get_media()
                 settings.o.output(1,"Playing %s-%s" % (pod.p_title, pod.e_title),None)
                 self.current = pod
-                self.player.play()
-                time.sleep(2)
                 self.duration = (self.player.get_length() / 1000)-1
                 settings.o.output(1,"Media duration: %d" % self.duration,None)
+                if (self.duration<0): 
+                    settings.o.output(1,"VLC ERROR: Negative Media Duration %s-%s %s" % (pod.p_title,pod.e_title,pod.mp3,),None)
+                    pod.type = settings.FILENOTFOUND
+                    settings.from_d.put(pod)
+                    continue                    
+                self.player.play()
                 time.sleep(self.duration)
             except Exception as e:
-                settings.o.output(0,"VLC ERROR: Cannot play %s-%s %s" % (pod.p_title,pod.e_title,pod.mp3,),e)
+                settings.o.output(1,"VLC ERROR: Cannot play %s-%s %s" % (pod.p_title,pod.e_title,pod.mp3,),e)
                 pod.type = settings.FILENOTFOUND
                 settings.from_d.put(pod)
     
