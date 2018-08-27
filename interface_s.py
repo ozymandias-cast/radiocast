@@ -33,7 +33,7 @@ class zmqinterface(Thread):
                 sndmsg.subtype = settings.VARIOUS
                 sndmsg.list = list(settings.playlist_various.queue)
             if (rcvmsg.subtype == settings.MOVIES): 
-                sndmsg.subtype = settings.MOVIES.copy()
+                sndmsg.subtype = settings.MOVIES
                 sndmsg.list = list(settings.playlist_movies.queue)
         if rcvmsg.type == settings.LIST_TO_D:
             sndmsg.type = settings.LIST_TO_D
