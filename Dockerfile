@@ -13,9 +13,7 @@ FROM alpine:3.8
 RUN apk add vlc
 
 RUN apk add gcc g++
-
 RUN apk add make
-
 RUN apk add python3-dev
 
 RUN apk add --no-cache python3 && \
@@ -26,6 +24,9 @@ RUN apk add --no-cache python3 && \
     if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi && \
     rm -r /root/.cache
 
+RUN apk del gcc g++
+RUN apk del make
+RUN apk del python3-dev
 
 RUN pip install feedparser 
 RUN pip install requests 
