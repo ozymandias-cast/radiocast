@@ -40,7 +40,7 @@ class podcast:
         self.file = row[4]
         self.description = row[5]
         self.downloaded = row[6]
-        self.downlading = row[7]
+        self.downloading = row[7]
         self.mp3 = row[8]
         self.category = row[9]
         self.type = settings.NONE
@@ -49,6 +49,17 @@ class podcast:
     def print_podcast(self):
         str_date = time.strftime("%a, %d %b %Y %H:%M:%S",self.date)
         settings.o.output(1,"Podcast: %s-%s (Category: %s) Date:%s URL: %s Filename: %s" % (self.p_title,self.e_title,self.category,str_date,self.file,self.mp3),None)
+
+    def pod_to_str(self):
+        str_date = time.strftime("Date: %a, %d %b %Y %H:%M:%S\n",self.date)
+        title = "Podcast: %s\n" % self.p_title
+        episode = "Episode: %s\n" % self.e_title
+        if self.downloaded: 
+            status = "Status: DOWNLOADED (%s)\n" % self.downloading
+        else:
+            status = "Status: NOT DOWNLOADED (%s)\n" % self.downloading
+        str_res = title + episode + status + str_date
+        return str_res
 
     def valid(self):
         now = datetime.now()

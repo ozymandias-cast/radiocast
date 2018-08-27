@@ -23,6 +23,8 @@ import datetime
 import settings
 import player
 import playlist
+import interface_s
+
 
 def signal_handler(sig, frame):
     if (sig == signal.SIGTERM or sig==signal.SIGINT):
@@ -81,6 +83,8 @@ def main():
     p.load_episodes()
 
     d.start()
+
+    zmq.start()
 
     play_gaming.start()
     play_movies.start()
@@ -174,6 +178,7 @@ if __name__ == "__main__":
         p = podb.podb(settings.db)
         cp = playlist.cplaylist()
         d = download.download()
+        zmq = interface_s.zmqinterface("4443")
         play_gaming = player.player(settings.ip,settings.port_gaming,'gaming')
         play_movies = player.player(settings.ip,settings.port_movies,'movies')
         play_various = player.player(settings.ip,settings.port_various,'various')

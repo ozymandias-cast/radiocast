@@ -22,6 +22,7 @@ RUN apk add --no-cache python3 && \
 RUN pip install feedparser 
 RUN pip install requests 
 RUN pip install python-vlc
+RUN pip install pyzmq
 
 RUN mkdir /podcasts/
 

@@ -35,6 +35,11 @@ def init():
     global PLAYED
     global NOTPLAYED
     global OTHERERROR
+    global LIST_PLAYLIST
+    global LIST_TO_D
+    global GAMING
+    global MOVIES
+    global VARIOUS
     global o
     global wait_per_download
     global wait_per_play
@@ -68,6 +73,11 @@ def init():
     PLAYED = 7
     NOTPLAYED = 8
     OTHERERROR = 9
+    LIST_PLAYLIST = 10
+    GAMING = 11
+    MOVIES = 12
+    VARIOUS = 13
+    LIST_TO_D = 14
 
     import socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
