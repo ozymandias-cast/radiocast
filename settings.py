@@ -44,9 +44,6 @@ def init():
     global wait_per_download
     global wait_per_play
 
-
-
-
     to_d = queue.Queue()
     from_d = queue.Queue()
     playlist_gaming = queue.Queue()
@@ -88,8 +85,8 @@ def init():
     port_movies = "4445"
     port_various = "4446"
 
-    print("Gaming %s:%s" % (ip,port_gaming))
-    print("Movies %s:%s" % (ip,port_movies))
-    print("Various %s:%s" % (ip,port_various))
+    #print("Gaming %s:%s" % (ip,port_gaming))
+    #@print("Movies %s:%s" % (ip,port_movies))
+    #print("Various %s:%s" % (ip,port_various))
 
     s.close()

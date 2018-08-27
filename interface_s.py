@@ -38,7 +38,7 @@ class zmqinterface(Thread):
         if rcvmsg.type == settings.LIST_TO_D:
             sndmsg.type = settings.LIST_TO_D
             sndmsg.subtype = None
-            sndmsg.list = list(settings.to_d)
+            sndmsg.list = list(settings.to_d.queue)
         return sndmsg
         
     def run(self):
