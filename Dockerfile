@@ -33,7 +33,9 @@ ADD player.py /
 ADD download.py /
 ADD settings.py /
 ADD debug_output.py /
+ADD interface_s.py /
 
+EXPOSE 4443
 EXPOSE 4444
 EXPOSE 4445
 EXPOSE 4446
