@@ -88,22 +88,29 @@ class player(Thread):
                 cmd = [pod.mp3]
                 #cmd.append("sout=#duplicate{dst=rtp{dst=%s,port=%s}" % (self.dst,self.port))
                 #cmd.append("sout=#standard{access=http,mux=ogg,dst=%s:%s}" % (self.dst,self.port))
-                cmd.append("sout=#standard{access=http,mux=ts,dst=%s:%s}" % (self.dst,self.port))
+                
                 #cmd.append("no-sout-rtp-sap")    
                 #cmd.append("no-sout-standard-sap")
                 #cmd.append("sout-rtp-caching=1000")
-                cmd.append("sout-mux-caching=1000")
+                
                 #cmd.append("sout-rtp-name=Hola")
                 #cmd.append("sout-rtp-description=Hola")
                 #cmd.append("sout-rtp-proto=tcp")
-                cmd.append("sout-keep")  
-
                 #cmd.append("sout=#duplicate{dst=rtp{dst=%s,port=%s}" % (self.dst,self.port))
                 #cmd.append("no-sout-rtp-sap")    
                 #cmd.append("no-sout-standard-sap")
                 #cmd.append("sout-rtp-caching=1000")
                 #cmd.append("sout-mux-caching=1000")
                 #cmd.append("sout-rtp-proto=udp")
+
+                # CHROMECAST STREMAING
+                #cmd.append("sout=#chromecast{ip=192.168.1.35}")
+                #cmd.append("sout-chromecast-port=%s" % self.port)
+
+                # HTTP STREAMING
+                cmd.append("sout=#standard{access=http,mux=ts,dst=%s:%s}" % (self.dst,self.port))
+                cmd.append("sout-mux-caching=1000")
+                cmd.append("sout-keep")  
 
                 Media = self.instance.media_new(*cmd)
                 self.player.set_media(Media)
